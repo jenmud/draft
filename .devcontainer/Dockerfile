@@ -63,9 +63,8 @@ RUN git clone https://github.com/google/protobuf.git && \
 ENV GO111MODULE=on
 
 # install some go stuff
-RUN go get -u -v github.com/mdempsky/gocode 2>&1 \
-    && go get -u -v github.com/derekparker/delve/cmd/dlv 2>&1 \
-    && go get google.golang.org/grpc \
-    && go get github.com/golang/protobuf/protoc-gen-go
+RUN go get -u -v github.com/mdempsky/gocode 2>&1
+RUN go get google.golang.org/grpc 2>&1
+RUN go get github.com/golang/protobuf/protoc-gen-go 2>&1
 
 ENV GOPRIVATE=github.com/jenmud
