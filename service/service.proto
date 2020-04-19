@@ -52,6 +52,15 @@ message NodesReq {}
 // EdgesReq used for returning all the edges in the graph.
 message EdgesReq {}
 
+// DumpReq is a request to producting a graph dump.
+message DumpReq {}
+
+// DumpResp is a graph dump response.
+message DumpResp {
+    repeated NodeResp nodes = 1;
+    repeated EdgeResp edges = 2;
+}
+
 // Graph is the graph service.
 service Graph {
     // AddNode adds a node to the graph.
@@ -67,4 +76,7 @@ service Graph {
     rpc Edge (GetReq) returns (EdgeResp);
     // Edges returns all the edges in the graph.
     rpc Edges (EdgesReq) returns (stream EdgeResp);
+
+    // Dump the graph.
+    rpc Dump(DumpReq) returns (DumpResp);
 }
