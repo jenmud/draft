@@ -63,7 +63,7 @@ func (g *Graph) Nodes() Iter {
 	g.lock.RLock()
 	defer g.lock.RUnlock()
 
-	nodes := make([]Node, len(g.nodes))
+	nodes := make([]interface{}, len(g.nodes))
 	count := 0
 	for _, node := range g.nodes {
 		nodes[count] = node

@@ -1,8 +1,8 @@
 package iterator
 
 // New returns a new iterator.
-func New(item ...interface{}) *Iterator {
-	return &Iterator{data: item}
+func New(items []interface{}) *Iterator {
+	return &Iterator{current: -1, data: items}
 }
 
 // Iterator is an iterator.
