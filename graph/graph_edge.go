@@ -61,25 +61,30 @@ func (g *Graph) AddEdge(uid, sourceUID, label, targetUID string, kv ...KV) (Edge
 }
 
 // RemoveEdge removes the edge from the graph.
-func (g *Graph) RemoveEdge(uid string) {
+func (g *Graph) RemoveEdge(uid string) error {
 	edge, err := g.Edge(uid)
 	if err != nil {
-		return
+		return fmt.Errorf("[RemoveEdge] %s", err)
 	}
 
 	// (source)->(target)
-	if source, err := g.Node(edge.SourceUID); err == nil {
-		delete(source.outEdges, uid)
+	source, err := g.Node(edge.SourceUID)
+	if err != nil {
+		return fmt.Errorf("[RemoveEdge] %s", err)
 	}
+	delete(source.outEdges, uid)
 
-	if target, err := g.Node(edge.TargetUID); err == nil {
-		delete(target.inEdges, uid)
+	target, err := g.Node(edge.TargetUID)
+	if err != nil {
+		return fmt.Errorf("[RemoveEdge] %s", err)
 	}
+	delete(target.inEdges, uid)
 
 	g.lock.Lock()
 	defer g.lock.Unlock()
 
 	delete(g.edges, uid)
+	return nil
 }
 
 // Edge returns the edge with the provided uid.

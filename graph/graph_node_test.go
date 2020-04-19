@@ -25,8 +25,42 @@ func TestAddNode_Duplicate(t *testing.T) {
 func TestRemoveNode(t *testing.T) {
 	g := New()
 	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	g.RemoveNode("abcd-1234")
+	err := g.RemoveNode("abcd-1234")
+	assert.Nil(t, err)
 	assert.Equal(t, false, g.HasNode("abcd-1234"))
+}
+
+func TestRemoveNode_with_edges(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+	g.AddEdge("edge-1", n1.UID, "knows", n2.UID)
+
+	err := g.RemoveNode("node-1")
+	assert.NotNil(t, err)
+	assert.Equal(t, true, g.HasNode("node-1"))
+	assert.Equal(t, true, g.HasNode("node-2"))
+	assert.Equal(t, true, g.HasEdge("edge-1"))
+}
+
+func TestRemoveNode_after_edge_removal(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+	g.AddEdge("edge-1", n1.UID, "knows", n2.UID)
+
+	err := g.RemoveNode("node-1")
+	assert.NotNil(t, err)
+
+	g.RemoveEdge("edge-1")
+	err = g.RemoveNode("node-1")
+	assert.Nil(t, err)
+
+	assert.Equal(t, false, g.HasNode("node-1"))
+	assert.Equal(t, true, g.HasNode("node-2"))
+	assert.Equal(t, false, g.HasEdge("edge-1"))
 }
 
 func TestHasNode(t *testing.T) {

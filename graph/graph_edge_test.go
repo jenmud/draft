@@ -90,7 +90,8 @@ func TestRemoveEdge(t *testing.T) {
 	edge1, _ := g.AddEdge("edge-1", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
 	edge2, _ := g.AddEdge("edge-2", n1.UID, "knows", n3.UID)
 
-	g.RemoveEdge("edge-1")
+	err := g.RemoveEdge("edge-1")
+	assert.Nil(t, err)
 	assert.Equal(t, false, g.HasEdge("edge-1"))
 
 	source, _ := g.Node(n1.UID)
@@ -107,6 +108,13 @@ func TestRemoveEdge(t *testing.T) {
 	// (n1)<-(n2)
 	_, ok = target.inEdges[edge1.UID]
 	assert.Equal(t, false, ok)
+}
+
+func TestRemoveEdge_missing_edge(t *testing.T) {
+	g := New()
+
+	err := g.RemoveEdge("edge-1")
+	assert.NotNil(t, err)
 }
 
 func TestEdge(t *testing.T) {

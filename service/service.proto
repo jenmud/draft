@@ -49,7 +49,8 @@ message EdgeResp {
 // RemoveResp is a response when removing a item from the graph.
 message RemoveResp {
     string uid = 1;
-    bool success = 2;
+    string error = 2;
+    bool success = 3;
 }
 
 // NodesReq used for returning all the nodes in the graph.

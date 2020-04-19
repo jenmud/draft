@@ -41,8 +41,14 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, er
 }
 
 func (s *server) RemoveEdge(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp, error) {
-	s.graph.RemoveEdge(req.Uid)
-	return &pb.RemoveResp{Uid: req.Uid, Success: true}, nil
+	var errmsg string
+
+	err := s.graph.RemoveEdge(req.Uid)
+	if err != nil {
+		errmsg = err.Error()
+	}
+
+	return &pb.RemoveResp{Uid: req.Uid, Success: err == nil, Error: errmsg}, nil
 }
 
 func (s *server) Edge(ctx context.Context, req *pb.UIDReq) (*pb.EdgeResp, error) {

@@ -39,8 +39,14 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, er
 }
 
 func (s *server) RemoveNode(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp, error) {
-	s.graph.RemoveNode(req.Uid)
-	return &pb.RemoveResp{Uid: req.Uid, Success: true}, nil
+	var errmsg string
+
+	err := s.graph.RemoveNode(req.Uid)
+	if err != nil {
+		errmsg = err.Error()
+	}
+
+	return &pb.RemoveResp{Uid: req.Uid, Success: err == nil, Error: errmsg}, nil
 }
 
 func (s *server) Node(ctx context.Context, req *pb.UIDReq) (*pb.NodeResp, error) {

@@ -38,10 +38,22 @@ func (g *Graph) UpdateNode(node Node) (Node, error) {
 }
 
 // RemoveNode removes the node from the graph.
-func (g *Graph) RemoveNode(uid string) {
+func (g *Graph) RemoveNode(uid string) error {
+	node, err := g.Node(uid)
+	if err != nil {
+		return fmt.Errorf("[RemoveNode] %s", err)
+	}
+
+	edgeCount := len(node.inEdges) + len(node.outEdges)
+	if edgeCount > 0 {
+		return fmt.Errorf("[RemoveNode] Can not remove node with edges attached (edge count: %d)", edgeCount)
+	}
+
 	g.lock.Lock()
 	defer g.lock.Unlock()
+
 	delete(g.nodes, uid)
+	return nil
 }
 
 // Node returns the node with the provided uid.
