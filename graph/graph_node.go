@@ -36,8 +36,8 @@ func (g *Graph) RemoveNode(uid string) {
 	delete(g.nodes, uid)
 }
 
-// GetNode returns the node with the provided uid.
-func (g *Graph) GetNode(uid string) (Node, error) {
+// Node returns the node with the provided uid.
+func (g *Graph) Node(uid string) (Node, error) {
 	g.lock.RLock()
 	defer g.lock.RUnlock()
 

@@ -44,7 +44,7 @@ func (s *server) RemoveNode(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp
 }
 
 func (s *server) Node(ctx context.Context, req *pb.UIDReq) (*pb.NodeResp, error) {
-	node, err := s.graph.GetNode(req.Uid)
+	node, err := s.graph.Node(req.Uid)
 	if err != nil {
 		return nil, err
 	}

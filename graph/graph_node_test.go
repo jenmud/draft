@@ -41,18 +41,18 @@ func TestHasNode_not_found(t *testing.T) {
 	assert.Equal(t, false, g.HasNode("missing"))
 }
 
-func TestGetNode(t *testing.T) {
+func TestNode(t *testing.T) {
 	g := New()
 	expected, _ := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	actual, err := g.GetNode("abcd-1234")
+	actual, err := g.Node("abcd-1234")
 	assert.Nil(t, err)
 	assert.Equal(t, expected, actual)
 }
 
-func TestGetNode_not_found(t *testing.T) {
+func TestNode_not_found(t *testing.T) {
 	g := New()
 	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	actual, err := g.GetNode("abcd-1234-missing")
+	actual, err := g.Node("abcd-1234-missing")
 	assert.NotNil(t, err)
 	assert.Equal(t, Node{}, actual)
 }
