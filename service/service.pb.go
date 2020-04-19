@@ -7,7 +7,11 @@
 package service
 
 import (
+	context "context"
 	proto "github.com/golang/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -884,4 +888,369 @@ func file_service_proto_init() {
 	file_service_proto_rawDesc = nil
 	file_service_proto_goTypes = nil
 	file_service_proto_depIdxs = nil
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConnInterface
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion6
+
+// GraphClient is the client API for Graph service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type GraphClient interface {
+	// AddNode adds a node to the graph.
+	AddNode(ctx context.Context, in *NodeReq, opts ...grpc.CallOption) (*NodeResp, error)
+	// Node returns the node if found.
+	Node(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*NodeResp, error)
+	// Nodes returns all the node in the graph.
+	Nodes(ctx context.Context, in *NodesReq, opts ...grpc.CallOption) (Graph_NodesClient, error)
+	// AddEdge adds a edge to the graph.
+	AddEdge(ctx context.Context, in *EdgeReq, opts ...grpc.CallOption) (*EdgeResp, error)
+	// Edge returns the edge if found.
+	Edge(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*EdgeResp, error)
+	// Edges returns all the edges in the graph.
+	Edges(ctx context.Context, in *EdgesReq, opts ...grpc.CallOption) (Graph_EdgesClient, error)
+	// Dump the graph.
+	Dump(ctx context.Context, in *DumpReq, opts ...grpc.CallOption) (*DumpResp, error)
+}
+
+type graphClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewGraphClient(cc grpc.ClientConnInterface) GraphClient {
+	return &graphClient{cc}
+}
+
+func (c *graphClient) AddNode(ctx context.Context, in *NodeReq, opts ...grpc.CallOption) (*NodeResp, error) {
+	out := new(NodeResp)
+	err := c.cc.Invoke(ctx, "/Graph/AddNode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *graphClient) Node(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*NodeResp, error) {
+	out := new(NodeResp)
+	err := c.cc.Invoke(ctx, "/Graph/Node", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *graphClient) Nodes(ctx context.Context, in *NodesReq, opts ...grpc.CallOption) (Graph_NodesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Graph_serviceDesc.Streams[0], "/Graph/Nodes", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &graphNodesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Graph_NodesClient interface {
+	Recv() (*NodeResp, error)
+	grpc.ClientStream
+}
+
+type graphNodesClient struct {
+	grpc.ClientStream
+}
+
+func (x *graphNodesClient) Recv() (*NodeResp, error) {
+	m := new(NodeResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *graphClient) AddEdge(ctx context.Context, in *EdgeReq, opts ...grpc.CallOption) (*EdgeResp, error) {
+	out := new(EdgeResp)
+	err := c.cc.Invoke(ctx, "/Graph/AddEdge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *graphClient) Edge(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*EdgeResp, error) {
+	out := new(EdgeResp)
+	err := c.cc.Invoke(ctx, "/Graph/Edge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *graphClient) Edges(ctx context.Context, in *EdgesReq, opts ...grpc.CallOption) (Graph_EdgesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Graph_serviceDesc.Streams[1], "/Graph/Edges", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &graphEdgesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Graph_EdgesClient interface {
+	Recv() (*EdgeResp, error)
+	grpc.ClientStream
+}
+
+type graphEdgesClient struct {
+	grpc.ClientStream
+}
+
+func (x *graphEdgesClient) Recv() (*EdgeResp, error) {
+	m := new(EdgeResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *graphClient) Dump(ctx context.Context, in *DumpReq, opts ...grpc.CallOption) (*DumpResp, error) {
+	out := new(DumpResp)
+	err := c.cc.Invoke(ctx, "/Graph/Dump", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// GraphServer is the server API for Graph service.
+type GraphServer interface {
+	// AddNode adds a node to the graph.
+	AddNode(context.Context, *NodeReq) (*NodeResp, error)
+	// Node returns the node if found.
+	Node(context.Context, *GetReq) (*NodeResp, error)
+	// Nodes returns all the node in the graph.
+	Nodes(*NodesReq, Graph_NodesServer) error
+	// AddEdge adds a edge to the graph.
+	AddEdge(context.Context, *EdgeReq) (*EdgeResp, error)
+	// Edge returns the edge if found.
+	Edge(context.Context, *GetReq) (*EdgeResp, error)
+	// Edges returns all the edges in the graph.
+	Edges(*EdgesReq, Graph_EdgesServer) error
+	// Dump the graph.
+	Dump(context.Context, *DumpReq) (*DumpResp, error)
+}
+
+// UnimplementedGraphServer can be embedded to have forward compatible implementations.
+type UnimplementedGraphServer struct {
+}
+
+func (*UnimplementedGraphServer) AddNode(context.Context, *NodeReq) (*NodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNode not implemented")
+}
+func (*UnimplementedGraphServer) Node(context.Context, *GetReq) (*NodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Node not implemented")
+}
+func (*UnimplementedGraphServer) Nodes(*NodesReq, Graph_NodesServer) error {
+	return status.Errorf(codes.Unimplemented, "method Nodes not implemented")
+}
+func (*UnimplementedGraphServer) AddEdge(context.Context, *EdgeReq) (*EdgeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddEdge not implemented")
+}
+func (*UnimplementedGraphServer) Edge(context.Context, *GetReq) (*EdgeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Edge not implemented")
+}
+func (*UnimplementedGraphServer) Edges(*EdgesReq, Graph_EdgesServer) error {
+	return status.Errorf(codes.Unimplemented, "method Edges not implemented")
+}
+func (*UnimplementedGraphServer) Dump(context.Context, *DumpReq) (*DumpResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Dump not implemented")
+}
+
+func RegisterGraphServer(s *grpc.Server, srv GraphServer) {
+	s.RegisterService(&_Graph_serviceDesc, srv)
+}
+
+func _Graph_AddNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphServer).AddNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Graph/AddNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphServer).AddNode(ctx, req.(*NodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Graph_Node_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphServer).Node(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Graph/Node",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphServer).Node(ctx, req.(*GetReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Graph_Nodes_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(NodesReq)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GraphServer).Nodes(m, &graphNodesServer{stream})
+}
+
+type Graph_NodesServer interface {
+	Send(*NodeResp) error
+	grpc.ServerStream
+}
+
+type graphNodesServer struct {
+	grpc.ServerStream
+}
+
+func (x *graphNodesServer) Send(m *NodeResp) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Graph_AddEdge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EdgeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphServer).AddEdge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Graph/AddEdge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphServer).AddEdge(ctx, req.(*EdgeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Graph_Edge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphServer).Edge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Graph/Edge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphServer).Edge(ctx, req.(*GetReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Graph_Edges_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(EdgesReq)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GraphServer).Edges(m, &graphEdgesServer{stream})
+}
+
+type Graph_EdgesServer interface {
+	Send(*EdgeResp) error
+	grpc.ServerStream
+}
+
+type graphEdgesServer struct {
+	grpc.ServerStream
+}
+
+func (x *graphEdgesServer) Send(m *EdgeResp) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Graph_Dump_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DumpReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphServer).Dump(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Graph/Dump",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphServer).Dump(ctx, req.(*DumpReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Graph_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "Graph",
+	HandlerType: (*GraphServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddNode",
+			Handler:    _Graph_AddNode_Handler,
+		},
+		{
+			MethodName: "Node",
+			Handler:    _Graph_Node_Handler,
+		},
+		{
+			MethodName: "AddEdge",
+			Handler:    _Graph_AddEdge_Handler,
+		},
+		{
+			MethodName: "Edge",
+			Handler:    _Graph_Edge_Handler,
+		},
+		{
+			MethodName: "Dump",
+			Handler:    _Graph_Dump_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Nodes",
+			Handler:       _Graph_Nodes_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "Edges",
+			Handler:       _Graph_Edges_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "service.proto",
 }
