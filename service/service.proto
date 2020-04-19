@@ -31,8 +31,8 @@ message NodeResp {
 // EdgeReq is a edge request.
 message EdgeReq {
     string uid = 1;
-    string label = 2;
     string source_uid = 3;
+    string label = 2;
     string target_uid = 4;
     map<string, Value> properties = 5;
 }
@@ -40,8 +40,8 @@ message EdgeReq {
 // EdgeResp is a edge response.
 message EdgeResp {
     string uid = 1;
-    string label = 2;
     string source_uid = 3;
+    string label = 2;
     string target_uid = 4;
     map<string, Value> properties = 5;
 }
