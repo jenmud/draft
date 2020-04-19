@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+option go_package = ".;service";
+
+// GetReq is a request used for searching the graph for a node/edge
+// which contains the uid.
+message GetReq {
+    string uid = 1;
+}
+
+// Value is the property value.
+message Value {
+    string type = 1;
+    bytes value = 2;
+}
+
+// NodeReq is a node request.
+message NodeReq {
+    string uid = 1;
+    string label = 2;
+    map<string, Value> properties = 3;
+}
+
+// NodeResp is a node response.
+message NodeResp {
+    string uid = 1;
+    string label = 2;
+    map<string, Value> properties = 3;
+}
+
+// EdgeReq is a edge request.
+message EdgeReq {
+    string uid = 1;
+    string label = 2;
+    string source_id = 3;
+    string target_id = 4;
+    map<string, Value> properties = 5;
+}
+
+// EdgeResp is a edge response.
+message EdgeResp {
+    string uid = 1;
+    string label = 2;
+    string source_id = 3;
+    string target_id = 4;
+    map<string, Value> properties = 5;
+}
+
+// NodesReq used for returning all the nodes in the graph.
+message NodesReq {}
+
+// EdgesReq used for returning all the edges in the graph.
+message EdgesReq {}
+
+// Graph is the graph service.
+service Graph {
+    // AddNode adds a node to the graph.
+    rpc AddNode (NodeReq) returns (NodeResp);
+    // Node returns the node if found.
+    rpc Node (GetReq) returns (NodeResp);
+    // Nodes returns all the node in the graph.
+    rpc Nodes (NodesReq) returns (stream NodeResp);
+
+    // AddEdge adds a edge to the graph.
+    rpc AddEdge (EdgeReq) returns (EdgeResp);
+    // Edge returns the edge if found.
+    rpc Edge (GetReq) returns (EdgeResp);
+    // Edges returns all the edges in the graph.
+    rpc Edges (EdgesReq) returns (stream EdgeResp);
+}
