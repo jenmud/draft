@@ -31,8 +31,13 @@ func (g *Graph) AddNode(uid, label string, kv ...KV) (Node, error) {
 
 // UpdateNode updates the graph node with the new node.
 func (g *Graph) UpdateNode(node Node) (Node, error) {
+	if !g.HasNode(node.UID) {
+		return node, fmt.Errorf("[UpdateNode] Node does not exists, can not update node %s", node)
+	}
+
 	g.lock.Lock()
 	defer g.lock.Unlock()
+
 	g.nodes[node.UID] = node
 	return node, nil
 }

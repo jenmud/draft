@@ -17,8 +17,13 @@ func (g *Graph) HasEdge(uid string) bool {
 
 // UpdateEdge updates the graph edge with the new edge.
 func (g *Graph) UpdateEdge(edge Edge) (Edge, error) {
+	if !g.HasEdge(edge.UID) {
+		return edge, fmt.Errorf("[UpdateEdge] Edge does not exists, can not update edge %s", edge)
+	}
+
 	g.lock.Lock()
 	defer g.lock.Unlock()
+
 	g.edges[edge.UID] = edge
 	return edge, nil
 }

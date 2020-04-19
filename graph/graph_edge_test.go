@@ -183,3 +183,19 @@ func TestUpdateEdge(t *testing.T) {
 	_, ok = target.inEdges[updated.UID]
 	assert.Equal(t, true, ok)
 }
+
+func TestUpdateEdge_missing_edge(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	old, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	g.RemoveEdge(old.UID)
+
+	old.Properties["since"] = Value{Type: "int", Value: []byte("2020")}
+
+	updated, err := g.UpdateEdge(old)
+	assert.NotNil(t, err)
+	assert.Equal(t, updated, old)
+}

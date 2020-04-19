@@ -125,3 +125,15 @@ func TestUpdateNode(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, updated, node)
 }
+
+func TestUpdateNode_missing_node(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	g.RemoveNode(n1.UID)
+	n1.Properties["surname"] = Value{Type: "string", Value: []byte("Blah")}
+
+	updated, err := g.UpdateNode(n1)
+	assert.NotNil(t, err)
+	assert.Equal(t, updated, n1)
+}
