@@ -15,7 +15,11 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, er
 	panic("NotImplemented")
 }
 
-func (s *server) Node(ctx context.Context, req *pb.GetReq) (*pb.NodeResp, error) {
+func (s *server) RemoveNode(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp, error) {
+	panic("NotImplemented")
+}
+
+func (s *server) Node(ctx context.Context, req *pb.UIDReq) (*pb.NodeResp, error) {
 	panic("NotImplemented")
 }
 
@@ -27,7 +31,11 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, er
 	panic("NotImplemented")
 }
 
-func (s *server) Edge(ctx context.Context, req *pb.GetReq) (*pb.EdgeResp, error) {
+func (s *server) RemoveEdge(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp, error) {
+	panic("NotImplemented")
+}
+
+func (s *server) Edge(ctx context.Context, req *pb.UIDReq) (*pb.EdgeResp, error) {
 	panic("NotImplemented")
 }
 

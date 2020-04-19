@@ -2,9 +2,9 @@ syntax = "proto3";
 
 option go_package = ".;service";
 
-// GetReq is a request used for searching the graph for a node/edge
+// UIDReq is a request used for searching the graph for a node/edge
 // which contains the uid.
-message GetReq {
+message UIDReq {
     string uid = 1;
 }
 
@@ -46,6 +46,10 @@ message EdgeResp {
     map<string, Value> properties = 5;
 }
 
+// RemoveResp is a response when removing a item from the graph.
+message RemoveResp {
+}
+
 // NodesReq used for returning all the nodes in the graph.
 message NodesReq {}
 
@@ -65,15 +69,19 @@ message DumpResp {
 service Graph {
     // AddNode adds a node to the graph.
     rpc AddNode (NodeReq) returns (NodeResp);
+    // RemoveNode remove a node from the graph.
+    rpc RemoveNode (UIDReq) returns (RemoveResp);
     // Node returns the node if found.
-    rpc Node (GetReq) returns (NodeResp);
+    rpc Node (UIDReq) returns (NodeResp);
     // Nodes returns all the node in the graph.
     rpc Nodes (NodesReq) returns (stream NodeResp);
 
     // AddEdge adds a edge to the graph.
     rpc AddEdge (EdgeReq) returns (EdgeResp);
+    // RemoveEdge remove a edge from the graph.
+    rpc RemoveEdge (UIDReq) returns (RemoveResp);
     // Edge returns the edge if found.
-    rpc Edge (GetReq) returns (EdgeResp);
+    rpc Edge (UIDReq) returns (EdgeResp);
     // Edges returns all the edges in the graph.
     rpc Edges (EdgesReq) returns (stream EdgeResp);
 

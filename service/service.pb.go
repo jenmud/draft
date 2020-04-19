@@ -29,9 +29,9 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// GetReq is a request used for searching the graph for a node/edge
+// UIDReq is a request used for searching the graph for a node/edge
 // which contains the uid.
-type GetReq struct {
+type UIDReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -39,8 +39,8 @@ type GetReq struct {
 	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 }
 
-func (x *GetReq) Reset() {
-	*x = GetReq{}
+func (x *UIDReq) Reset() {
+	*x = UIDReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_service_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -48,13 +48,13 @@ func (x *GetReq) Reset() {
 	}
 }
 
-func (x *GetReq) String() string {
+func (x *UIDReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetReq) ProtoMessage() {}
+func (*UIDReq) ProtoMessage() {}
 
-func (x *GetReq) ProtoReflect() protoreflect.Message {
+func (x *UIDReq) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -66,12 +66,12 @@ func (x *GetReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetReq.ProtoReflect.Descriptor instead.
-func (*GetReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use UIDReq.ProtoReflect.Descriptor instead.
+func (*UIDReq) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *GetReq) GetUid() string {
+func (x *UIDReq) GetUid() string {
 	if x != nil {
 		return x.Uid
 	}
@@ -422,6 +422,45 @@ func (x *EdgeResp) GetProperties() map[string]*Value {
 	return nil
 }
 
+// RemoveResp is a response when removing a item from the graph.
+type RemoveResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *RemoveResp) Reset() {
+	*x = RemoveResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_service_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RemoveResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveResp) ProtoMessage() {}
+
+func (x *RemoveResp) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveResp.ProtoReflect.Descriptor instead.
+func (*RemoveResp) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{6}
+}
+
 // NodesReq used for returning all the nodes in the graph.
 type NodesReq struct {
 	state         protoimpl.MessageState
@@ -432,7 +471,7 @@ type NodesReq struct {
 func (x *NodesReq) Reset() {
 	*x = NodesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[6]
+		mi := &file_service_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -445,7 +484,7 @@ func (x *NodesReq) String() string {
 func (*NodesReq) ProtoMessage() {}
 
 func (x *NodesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[6]
+	mi := &file_service_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -458,7 +497,7 @@ func (x *NodesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NodesReq.ProtoReflect.Descriptor instead.
 func (*NodesReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{6}
+	return file_service_proto_rawDescGZIP(), []int{7}
 }
 
 // EdgesReq used for returning all the edges in the graph.
@@ -471,7 +510,7 @@ type EdgesReq struct {
 func (x *EdgesReq) Reset() {
 	*x = EdgesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[7]
+		mi := &file_service_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -484,7 +523,7 @@ func (x *EdgesReq) String() string {
 func (*EdgesReq) ProtoMessage() {}
 
 func (x *EdgesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[7]
+	mi := &file_service_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -497,7 +536,7 @@ func (x *EdgesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EdgesReq.ProtoReflect.Descriptor instead.
 func (*EdgesReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{7}
+	return file_service_proto_rawDescGZIP(), []int{8}
 }
 
 // DumpReq is a request to producting a graph dump.
@@ -510,7 +549,7 @@ type DumpReq struct {
 func (x *DumpReq) Reset() {
 	*x = DumpReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[8]
+		mi := &file_service_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -523,7 +562,7 @@ func (x *DumpReq) String() string {
 func (*DumpReq) ProtoMessage() {}
 
 func (x *DumpReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[8]
+	mi := &file_service_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -536,7 +575,7 @@ func (x *DumpReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DumpReq.ProtoReflect.Descriptor instead.
 func (*DumpReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{8}
+	return file_service_proto_rawDescGZIP(), []int{9}
 }
 
 // DumpResp is a graph dump response.
@@ -552,7 +591,7 @@ type DumpResp struct {
 func (x *DumpResp) Reset() {
 	*x = DumpResp{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[9]
+		mi := &file_service_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -565,7 +604,7 @@ func (x *DumpResp) String() string {
 func (*DumpResp) ProtoMessage() {}
 
 func (x *DumpResp) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[9]
+	mi := &file_service_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -578,7 +617,7 @@ func (x *DumpResp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DumpResp.ProtoReflect.Descriptor instead.
 func (*DumpResp) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{9}
+	return file_service_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DumpResp) GetNodes() []*NodeResp {
@@ -599,7 +638,7 @@ var File_service_proto protoreflect.FileDescriptor
 
 var file_service_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
-	0x1a, 0x0a, 0x06, 0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x69, 0x64,
+	0x1a, 0x0a, 0x06, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x69, 0x64,
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x69, 0x64, 0x22, 0x31, 0x0a, 0x05, 0x56,
 	0x61, 0x6c, 0x75, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75,
@@ -657,29 +696,34 @@ var file_service_proto_rawDesc = []byte{
 	0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79,
 	0x12, 0x1c, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
 	0x06, 0x2e, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02,
-	0x38, 0x01, 0x22, 0x0a, 0x0a, 0x08, 0x4e, 0x6f, 0x64, 0x65, 0x73, 0x52, 0x65, 0x71, 0x22, 0x0a,
-	0x0a, 0x08, 0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x22, 0x09, 0x0a, 0x07, 0x44, 0x75,
-	0x6d, 0x70, 0x52, 0x65, 0x71, 0x22, 0x4c, 0x0a, 0x08, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x73,
-	0x70, 0x12, 0x1f, 0x0a, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x52, 0x05, 0x6e, 0x6f, 0x64,
-	0x65, 0x73, 0x12, 0x1f, 0x0a, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x52, 0x05, 0x65, 0x64,
-	0x67, 0x65, 0x73, 0x32, 0xde, 0x01, 0x0a, 0x05, 0x47, 0x72, 0x61, 0x70, 0x68, 0x12, 0x1e, 0x0a,
-	0x07, 0x41, 0x64, 0x64, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x08, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52,
-	0x65, 0x71, 0x1a, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1a, 0x0a,
-	0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x07, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x09,
-	0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05, 0x4e, 0x6f, 0x64,
-	0x65, 0x73, 0x12, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e,
-	0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1e, 0x0a, 0x07, 0x41, 0x64,
-	0x64, 0x45, 0x64, 0x67, 0x65, 0x12, 0x08, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x71, 0x1a,
-	0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1a, 0x0a, 0x04, 0x45, 0x64,
-	0x67, 0x65, 0x12, 0x07, 0x2e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x45, 0x64,
-	0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05, 0x45, 0x64, 0x67, 0x65, 0x73, 0x12,
-	0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x45, 0x64, 0x67,
-	0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1b, 0x0a, 0x04, 0x44, 0x75, 0x6d, 0x70, 0x12,
-	0x08, 0x2e, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x44, 0x75, 0x6d, 0x70,
-	0x52, 0x65, 0x73, 0x70, 0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x3b, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
-	0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x38, 0x01, 0x22, 0x0c, 0x0a, 0x0a, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70,
+	0x22, 0x0a, 0x0a, 0x08, 0x4e, 0x6f, 0x64, 0x65, 0x73, 0x52, 0x65, 0x71, 0x22, 0x0a, 0x0a, 0x08,
+	0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x22, 0x09, 0x0a, 0x07, 0x44, 0x75, 0x6d, 0x70,
+	0x52, 0x65, 0x71, 0x22, 0x4c, 0x0a, 0x08, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x73, 0x70, 0x12,
+	0x1f, 0x0a, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x09,
+	0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x52, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73,
+	0x12, 0x1f, 0x0a, 0x05, 0x65, 0x64, 0x67, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x52, 0x05, 0x65, 0x64, 0x67, 0x65,
+	0x73, 0x32, 0xa6, 0x02, 0x0a, 0x05, 0x47, 0x72, 0x61, 0x70, 0x68, 0x12, 0x1e, 0x0a, 0x07, 0x41,
+	0x64, 0x64, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x08, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x71,
+	0x1a, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x22, 0x0a, 0x0a, 0x52,
+	0x65, 0x6d, 0x6f, 0x76, 0x65, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52,
+	0x65, 0x71, 0x1a, 0x0b, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12,
+	0x1a, 0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71,
+	0x1a, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05, 0x4e,
+	0x6f, 0x64, 0x65, 0x73, 0x12, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a,
+	0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1e, 0x0a, 0x07,
+	0x41, 0x64, 0x64, 0x45, 0x64, 0x67, 0x65, 0x12, 0x08, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65,
+	0x71, 0x1a, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x22, 0x0a, 0x0a,
+	0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x45, 0x64, 0x67, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44,
+	0x52, 0x65, 0x71, 0x1a, 0x0b, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70,
+	0x12, 0x1a, 0x0a, 0x04, 0x45, 0x64, 0x67, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65,
+	0x71, 0x1a, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05,
+	0x45, 0x64, 0x67, 0x65, 0x73, 0x12, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71,
+	0x1a, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1b, 0x0a,
+	0x04, 0x44, 0x75, 0x6d, 0x70, 0x12, 0x08, 0x2e, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x71, 0x1a,
+	0x09, 0x2e, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x73, 0x70, 0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x3b,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -694,28 +738,29 @@ func file_service_proto_rawDescGZIP() []byte {
 	return file_service_proto_rawDescData
 }
 
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_service_proto_goTypes = []interface{}{
-	(*GetReq)(nil),   // 0: GetReq
-	(*Value)(nil),    // 1: Value
-	(*NodeReq)(nil),  // 2: NodeReq
-	(*NodeResp)(nil), // 3: NodeResp
-	(*EdgeReq)(nil),  // 4: EdgeReq
-	(*EdgeResp)(nil), // 5: EdgeResp
-	(*NodesReq)(nil), // 6: NodesReq
-	(*EdgesReq)(nil), // 7: EdgesReq
-	(*DumpReq)(nil),  // 8: DumpReq
-	(*DumpResp)(nil), // 9: DumpResp
-	nil,              // 10: NodeReq.PropertiesEntry
-	nil,              // 11: NodeResp.PropertiesEntry
-	nil,              // 12: EdgeReq.PropertiesEntry
-	nil,              // 13: EdgeResp.PropertiesEntry
+	(*UIDReq)(nil),     // 0: UIDReq
+	(*Value)(nil),      // 1: Value
+	(*NodeReq)(nil),    // 2: NodeReq
+	(*NodeResp)(nil),   // 3: NodeResp
+	(*EdgeReq)(nil),    // 4: EdgeReq
+	(*EdgeResp)(nil),   // 5: EdgeResp
+	(*RemoveResp)(nil), // 6: RemoveResp
+	(*NodesReq)(nil),   // 7: NodesReq
+	(*EdgesReq)(nil),   // 8: EdgesReq
+	(*DumpReq)(nil),    // 9: DumpReq
+	(*DumpResp)(nil),   // 10: DumpResp
+	nil,                // 11: NodeReq.PropertiesEntry
+	nil,                // 12: NodeResp.PropertiesEntry
+	nil,                // 13: EdgeReq.PropertiesEntry
+	nil,                // 14: EdgeResp.PropertiesEntry
 }
 var file_service_proto_depIdxs = []int32{
-	10, // 0: NodeReq.properties:type_name -> NodeReq.PropertiesEntry
-	11, // 1: NodeResp.properties:type_name -> NodeResp.PropertiesEntry
-	12, // 2: EdgeReq.properties:type_name -> EdgeReq.PropertiesEntry
-	13, // 3: EdgeResp.properties:type_name -> EdgeResp.PropertiesEntry
+	11, // 0: NodeReq.properties:type_name -> NodeReq.PropertiesEntry
+	12, // 1: NodeResp.properties:type_name -> NodeResp.PropertiesEntry
+	13, // 2: EdgeReq.properties:type_name -> EdgeReq.PropertiesEntry
+	14, // 3: EdgeResp.properties:type_name -> EdgeResp.PropertiesEntry
 	3,  // 4: DumpResp.nodes:type_name -> NodeResp
 	5,  // 5: DumpResp.edges:type_name -> EdgeResp
 	1,  // 6: NodeReq.PropertiesEntry.value:type_name -> Value
@@ -723,21 +768,25 @@ var file_service_proto_depIdxs = []int32{
 	1,  // 8: EdgeReq.PropertiesEntry.value:type_name -> Value
 	1,  // 9: EdgeResp.PropertiesEntry.value:type_name -> Value
 	2,  // 10: Graph.AddNode:input_type -> NodeReq
-	0,  // 11: Graph.Node:input_type -> GetReq
-	6,  // 12: Graph.Nodes:input_type -> NodesReq
-	4,  // 13: Graph.AddEdge:input_type -> EdgeReq
-	0,  // 14: Graph.Edge:input_type -> GetReq
-	7,  // 15: Graph.Edges:input_type -> EdgesReq
-	8,  // 16: Graph.Dump:input_type -> DumpReq
-	3,  // 17: Graph.AddNode:output_type -> NodeResp
-	3,  // 18: Graph.Node:output_type -> NodeResp
-	3,  // 19: Graph.Nodes:output_type -> NodeResp
-	5,  // 20: Graph.AddEdge:output_type -> EdgeResp
-	5,  // 21: Graph.Edge:output_type -> EdgeResp
-	5,  // 22: Graph.Edges:output_type -> EdgeResp
-	9,  // 23: Graph.Dump:output_type -> DumpResp
-	17, // [17:24] is the sub-list for method output_type
-	10, // [10:17] is the sub-list for method input_type
+	0,  // 11: Graph.RemoveNode:input_type -> UIDReq
+	0,  // 12: Graph.Node:input_type -> UIDReq
+	7,  // 13: Graph.Nodes:input_type -> NodesReq
+	4,  // 14: Graph.AddEdge:input_type -> EdgeReq
+	0,  // 15: Graph.RemoveEdge:input_type -> UIDReq
+	0,  // 16: Graph.Edge:input_type -> UIDReq
+	8,  // 17: Graph.Edges:input_type -> EdgesReq
+	9,  // 18: Graph.Dump:input_type -> DumpReq
+	3,  // 19: Graph.AddNode:output_type -> NodeResp
+	6,  // 20: Graph.RemoveNode:output_type -> RemoveResp
+	3,  // 21: Graph.Node:output_type -> NodeResp
+	3,  // 22: Graph.Nodes:output_type -> NodeResp
+	5,  // 23: Graph.AddEdge:output_type -> EdgeResp
+	6,  // 24: Graph.RemoveEdge:output_type -> RemoveResp
+	5,  // 25: Graph.Edge:output_type -> EdgeResp
+	5,  // 26: Graph.Edges:output_type -> EdgeResp
+	10, // 27: Graph.Dump:output_type -> DumpResp
+	19, // [19:28] is the sub-list for method output_type
+	10, // [10:19] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
 	10, // [10:10] is the sub-list for extension extendee
 	0,  // [0:10] is the sub-list for field type_name
@@ -750,7 +799,7 @@ func file_service_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetReq); i {
+			switch v := v.(*UIDReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -822,7 +871,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*NodesReq); i {
+			switch v := v.(*RemoveResp); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -834,7 +883,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*EdgesReq); i {
+			switch v := v.(*NodesReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -846,7 +895,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DumpReq); i {
+			switch v := v.(*EdgesReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -858,6 +907,18 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DumpReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_service_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DumpResp); i {
 			case 0:
 				return &v.state
@@ -876,7 +937,7 @@ func file_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -904,14 +965,18 @@ const _ = grpc.SupportPackageIsVersion6
 type GraphClient interface {
 	// AddNode adds a node to the graph.
 	AddNode(ctx context.Context, in *NodeReq, opts ...grpc.CallOption) (*NodeResp, error)
+	// RemoveNode remove a node from the graph.
+	RemoveNode(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*RemoveResp, error)
 	// Node returns the node if found.
-	Node(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*NodeResp, error)
+	Node(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*NodeResp, error)
 	// Nodes returns all the node in the graph.
 	Nodes(ctx context.Context, in *NodesReq, opts ...grpc.CallOption) (Graph_NodesClient, error)
 	// AddEdge adds a edge to the graph.
 	AddEdge(ctx context.Context, in *EdgeReq, opts ...grpc.CallOption) (*EdgeResp, error)
+	// RemoveEdge remove a edge from the graph.
+	RemoveEdge(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*RemoveResp, error)
 	// Edge returns the edge if found.
-	Edge(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*EdgeResp, error)
+	Edge(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*EdgeResp, error)
 	// Edges returns all the edges in the graph.
 	Edges(ctx context.Context, in *EdgesReq, opts ...grpc.CallOption) (Graph_EdgesClient, error)
 	// Dump the graph.
@@ -935,7 +1000,16 @@ func (c *graphClient) AddNode(ctx context.Context, in *NodeReq, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *graphClient) Node(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*NodeResp, error) {
+func (c *graphClient) RemoveNode(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*RemoveResp, error) {
+	out := new(RemoveResp)
+	err := c.cc.Invoke(ctx, "/Graph/RemoveNode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *graphClient) Node(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*NodeResp, error) {
 	out := new(NodeResp)
 	err := c.cc.Invoke(ctx, "/Graph/Node", in, out, opts...)
 	if err != nil {
@@ -985,7 +1059,16 @@ func (c *graphClient) AddEdge(ctx context.Context, in *EdgeReq, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *graphClient) Edge(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*EdgeResp, error) {
+func (c *graphClient) RemoveEdge(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*RemoveResp, error) {
+	out := new(RemoveResp)
+	err := c.cc.Invoke(ctx, "/Graph/RemoveEdge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *graphClient) Edge(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*EdgeResp, error) {
 	out := new(EdgeResp)
 	err := c.cc.Invoke(ctx, "/Graph/Edge", in, out, opts...)
 	if err != nil {
@@ -1039,14 +1122,18 @@ func (c *graphClient) Dump(ctx context.Context, in *DumpReq, opts ...grpc.CallOp
 type GraphServer interface {
 	// AddNode adds a node to the graph.
 	AddNode(context.Context, *NodeReq) (*NodeResp, error)
+	// RemoveNode remove a node from the graph.
+	RemoveNode(context.Context, *UIDReq) (*RemoveResp, error)
 	// Node returns the node if found.
-	Node(context.Context, *GetReq) (*NodeResp, error)
+	Node(context.Context, *UIDReq) (*NodeResp, error)
 	// Nodes returns all the node in the graph.
 	Nodes(*NodesReq, Graph_NodesServer) error
 	// AddEdge adds a edge to the graph.
 	AddEdge(context.Context, *EdgeReq) (*EdgeResp, error)
+	// RemoveEdge remove a edge from the graph.
+	RemoveEdge(context.Context, *UIDReq) (*RemoveResp, error)
 	// Edge returns the edge if found.
-	Edge(context.Context, *GetReq) (*EdgeResp, error)
+	Edge(context.Context, *UIDReq) (*EdgeResp, error)
 	// Edges returns all the edges in the graph.
 	Edges(*EdgesReq, Graph_EdgesServer) error
 	// Dump the graph.
@@ -1060,7 +1147,10 @@ type UnimplementedGraphServer struct {
 func (*UnimplementedGraphServer) AddNode(context.Context, *NodeReq) (*NodeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddNode not implemented")
 }
-func (*UnimplementedGraphServer) Node(context.Context, *GetReq) (*NodeResp, error) {
+func (*UnimplementedGraphServer) RemoveNode(context.Context, *UIDReq) (*RemoveResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNode not implemented")
+}
+func (*UnimplementedGraphServer) Node(context.Context, *UIDReq) (*NodeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Node not implemented")
 }
 func (*UnimplementedGraphServer) Nodes(*NodesReq, Graph_NodesServer) error {
@@ -1069,7 +1159,10 @@ func (*UnimplementedGraphServer) Nodes(*NodesReq, Graph_NodesServer) error {
 func (*UnimplementedGraphServer) AddEdge(context.Context, *EdgeReq) (*EdgeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddEdge not implemented")
 }
-func (*UnimplementedGraphServer) Edge(context.Context, *GetReq) (*EdgeResp, error) {
+func (*UnimplementedGraphServer) RemoveEdge(context.Context, *UIDReq) (*RemoveResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveEdge not implemented")
+}
+func (*UnimplementedGraphServer) Edge(context.Context, *UIDReq) (*EdgeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Edge not implemented")
 }
 func (*UnimplementedGraphServer) Edges(*EdgesReq, Graph_EdgesServer) error {
@@ -1101,8 +1194,26 @@ func _Graph_AddNode_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Graph_RemoveNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UIDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphServer).RemoveNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Graph/RemoveNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphServer).RemoveNode(ctx, req.(*UIDReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Graph_Node_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetReq)
+	in := new(UIDReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1114,7 +1225,7 @@ func _Graph_Node_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/Graph/Node",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GraphServer).Node(ctx, req.(*GetReq))
+		return srv.(GraphServer).Node(ctx, req.(*UIDReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1158,8 +1269,26 @@ func _Graph_AddEdge_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Graph_RemoveEdge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UIDReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GraphServer).RemoveEdge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Graph/RemoveEdge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GraphServer).RemoveEdge(ctx, req.(*UIDReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Graph_Edge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetReq)
+	in := new(UIDReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1171,7 +1300,7 @@ func _Graph_Edge_Handler(srv interface{}, ctx context.Context, dec func(interfac
 		FullMethod: "/Graph/Edge",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GraphServer).Edge(ctx, req.(*GetReq))
+		return srv.(GraphServer).Edge(ctx, req.(*UIDReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1224,12 +1353,20 @@ var _Graph_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Graph_AddNode_Handler,
 		},
 		{
+			MethodName: "RemoveNode",
+			Handler:    _Graph_RemoveNode_Handler,
+		},
+		{
 			MethodName: "Node",
 			Handler:    _Graph_Node_Handler,
 		},
 		{
 			MethodName: "AddEdge",
 			Handler:    _Graph_AddEdge_Handler,
+		},
+		{
+			MethodName: "RemoveEdge",
+			Handler:    _Graph_RemoveEdge_Handler,
 		},
 		{
 			MethodName: "Edge",
