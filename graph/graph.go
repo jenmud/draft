@@ -59,7 +59,7 @@ func (g *Graph) GetNode(uid string) (Node, error) {
 }
 
 // Nodes returns a node iterator.
-func (g *Graph) Nodes() Iter {
+func (g *Graph) Nodes() Iterator {
 	g.lock.RLock()
 	defer g.lock.RUnlock()
 
