@@ -41,15 +41,30 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, er
 }
 
 func (s *server) RemoveEdge(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp, error) {
-	panic("NotImplemented")
+	s.graph.RemoveEdge(req.Uid)
+	return &pb.RemoveResp{Uid: req.Uid, Success: true}, nil
 }
 
 func (s *server) Edge(ctx context.Context, req *pb.UIDReq) (*pb.EdgeResp, error) {
-	panic("NotImplemented")
+	edge, err := s.graph.Edge(req.Uid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: convertGraphPropsToServiceProps(edge.Properties)}, nil
 }
 
 func (s *server) Edges(req *pb.EdgesReq, stream pb.Graph_EdgesServer) error {
-	panic("NotImplemented")
+	iter := s.graph.Edges()
+	for iter.Next() {
+		edge := iter.Value().(graph.Edge)
+		resp := pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: convertGraphPropsToServiceProps(edge.Properties)}
+		if err := stream.Send(&resp); err != nil {
+			return nil
+		}
+	}
+
+	return nil
 }
 
 func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
