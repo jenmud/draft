@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/jenmud/draft/graph"
 	pb "github.com/jenmud/draft/service"
 )
@@ -19,6 +21,9 @@ type server struct {
 	graph *graph.Graph
 }
 
+func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
+	panic("NotImplemented")
+}
 
 // See server_node.go for node methods
 // See server_edge.go for edge methods

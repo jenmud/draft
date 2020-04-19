@@ -66,7 +66,3 @@ func (s *server) Edges(req *pb.EdgesReq, stream pb.Graph_EdgesServer) error {
 
 	return nil
 }
-
-func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
-	panic("NotImplemented")
-}

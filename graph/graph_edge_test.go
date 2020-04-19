@@ -17,6 +17,15 @@ func TestAddEdge(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, expected, actual)
+
+	source, _ := g.Node(n1.UID)
+	target, _ := g.Node(n2.UID)
+
+	_, ok := source.outEdges[actual.UID]
+	assert.Equal(t, true, ok)
+
+	_, ok = target.inEdges[actual.UID]
+	assert.Equal(t, true, ok)
 }
 
 func TestAddEdge_missing_source(t *testing.T) {
@@ -76,10 +85,28 @@ func TestRemoveEdge(t *testing.T) {
 
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
-	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	n3, _ := g.AddNode("node-3", "person")
 
-	g.RemoveEdge("edge-1234")
-	assert.Equal(t, false, g.HasEdge("edge-1234"))
+	edge1, _ := g.AddEdge("edge-1", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	edge2, _ := g.AddEdge("edge-2", n1.UID, "knows", n3.UID)
+
+	g.RemoveEdge("edge-1")
+	assert.Equal(t, false, g.HasEdge("edge-1"))
+
+	source, _ := g.Node(n1.UID)
+	target, _ := g.Node(n2.UID)
+
+	// (n1)->(n2)
+	_, ok := source.outEdges[edge1.UID]
+	assert.Equal(t, false, ok)
+
+	// (n1)->(n3)
+	_, ok = source.outEdges[edge2.UID]
+	assert.Equal(t, true, ok)
+
+	// (n1)<-(n2)
+	_, ok = target.inEdges[edge1.UID]
+	assert.Equal(t, false, ok)
 }
 
 func TestEdge(t *testing.T) {
@@ -123,4 +150,28 @@ func TestEdges(t *testing.T) {
 	}
 
 	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestUpdateEdge(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	old, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	old.Properties["since"] = Value{Type: "int", Value: []byte("2020")}
+
+	updated, err := g.UpdateEdge(old)
+
+	assert.Nil(t, err)
+	assert.Equal(t, updated, old)
+
+	source, _ := g.Node(n1.UID)
+	target, _ := g.Node(n2.UID)
+
+	_, ok := source.outEdges[updated.UID]
+	assert.Equal(t, true, ok)
+
+	_, ok = target.inEdges[updated.UID]
+	assert.Equal(t, true, ok)
 }

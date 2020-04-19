@@ -29,6 +29,14 @@ func (g *Graph) AddNode(uid, label string, kv ...KV) (Node, error) {
 	return node, nil
 }
 
+// UpdateNode updates the graph node with the new node.
+func (g *Graph) UpdateNode(node Node) (Node, error) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+	g.nodes[node.UID] = node
+	return node, nil
+}
+
 // RemoveNode removes the node from the graph.
 func (g *Graph) RemoveNode(uid string) {
 	g.lock.Lock()

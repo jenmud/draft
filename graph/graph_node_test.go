@@ -72,3 +72,16 @@ func TestNodes(t *testing.T) {
 
 	assert.ElementsMatch(t, expected, actual)
 }
+
+func TestUpdateNode(t *testing.T) {
+	g := New()
+
+	old, err := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	old.Properties["name"] = Value{Type: "string", Value: []byte("bar")}
+
+	updated, err := g.UpdateNode(old)
+	node, _ := g.Node(old.UID)
+
+	assert.Nil(t, err)
+	assert.Equal(t, updated, node)
+}

@@ -6,8 +6,8 @@ func NewNode(uid, label string, kv ...KV) Node {
 		UID:        uid,
 		Label:      label,
 		Properties: NewProperties(kv...),
-		inEdges:    make(map[string]string),
-		outEdges:   make(map[string]string),
+		inEdges:    make(map[string]struct{}),
+		outEdges:   make(map[string]struct{}),
 	}
 }
 
@@ -16,6 +16,6 @@ type Node struct {
 	UID        string           `json:"uid"`
 	Label      string           `json:"label"`
 	Properties map[string]Value `json:"properties"`
-	inEdges    map[string]string
-	outEdges   map[string]string
+	inEdges    map[string]struct{}
+	outEdges   map[string]struct{}
 }

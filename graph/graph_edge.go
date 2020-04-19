@@ -15,6 +15,14 @@ func (g *Graph) HasEdge(uid string) bool {
 	return ok
 }
 
+// UpdateEdge updates the graph edge with the new edge.
+func (g *Graph) UpdateEdge(edge Edge) (Edge, error) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+	g.edges[edge.UID] = edge
+	return edge, nil
+}
+
 // AddEdge adds a new edge to the graph.
 func (g *Graph) AddEdge(uid, sourceUID, label, targetUID string, kv ...KV) (Edge, error) {
 	if !g.HasNode(sourceUID) {
@@ -23,6 +31,16 @@ func (g *Graph) AddEdge(uid, sourceUID, label, targetUID string, kv ...KV) (Edge
 
 	if !g.HasNode(targetUID) {
 		return Edge{}, fmt.Errorf("[AddEdge] No such not with UID %s", targetUID)
+	}
+
+	source, err := g.Node(sourceUID)
+	if err != nil {
+		return Edge{}, fmt.Errorf("[AddEdge] %s", err)
+	}
+
+	target, err := g.Node(targetUID)
+	if err != nil {
+		return Edge{}, fmt.Errorf("[AddEdge] %s", err)
 	}
 
 	g.lock.Lock()
@@ -34,13 +52,33 @@ func (g *Graph) AddEdge(uid, sourceUID, label, targetUID string, kv ...KV) (Edge
 
 	edge := NewEdge(uid, sourceUID, label, targetUID, kv...)
 	g.edges[edge.UID] = edge
+
+	// (source)->(target)
+	source.outEdges[edge.UID] = struct{}{}
+	target.inEdges[edge.UID] = struct{}{}
+
 	return edge, nil
 }
 
 // RemoveEdge removes the edge from the graph.
 func (g *Graph) RemoveEdge(uid string) {
+	edge, err := g.Edge(uid)
+	if err != nil {
+		return
+	}
+
+	// (source)->(target)
+	if source, err := g.Node(edge.SourceUID); err == nil {
+		delete(source.outEdges, uid)
+	}
+
+	if target, err := g.Node(edge.TargetUID); err == nil {
+		delete(target.inEdges, uid)
+	}
+
 	g.lock.Lock()
 	defer g.lock.Unlock()
+
 	delete(g.edges, uid)
 }
 
