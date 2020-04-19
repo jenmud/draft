@@ -22,6 +22,13 @@ func TestAddNode_Duplicate(t *testing.T) {
 	assert.Equal(t, Node{}, actual)
 }
 
+func TestRemoveNode(t *testing.T) {
+	g := New()
+	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	g.RemoveNode("abcd-1234")
+	assert.Equal(t, false, g.HasNode("abcd-1234"))
+}
+
 func TestHasNode(t *testing.T) {
 	g := New()
 	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})

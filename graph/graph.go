@@ -45,6 +45,13 @@ func (g *Graph) AddNode(uid, label string, kv ...KV) (Node, error) {
 	return node, nil
 }
 
+// RemoveNode removes the node from the graph.
+func (g *Graph) RemoveNode(uid string) {
+	g.lock.Lock()
+	defer g.lock.Unlock()
+	delete(g.nodes, uid)
+}
+
 // GetNode returns the node with the provided uid.
 func (g *Graph) GetNode(uid string) (Node, error) {
 	g.lock.RLock()
