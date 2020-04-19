@@ -28,6 +28,8 @@ func run(address string) error {
 
 	s := grpc.NewServer()
 	pb.RegisterGraphServer(s, &server{graph: graph.New()})
+
+	log.Printf("[%s] Service accepting connections on %s", "run", listener.Addr())
 	return s.Serve(listener)
 }
 
