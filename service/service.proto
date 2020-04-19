@@ -32,8 +32,8 @@ message NodeResp {
 message EdgeReq {
     string uid = 1;
     string label = 2;
-    string source_id = 3;
-    string target_id = 4;
+    string source_uid = 3;
+    string target_uid = 4;
     map<string, Value> properties = 5;
 }
 
@@ -41,8 +41,8 @@ message EdgeReq {
 message EdgeResp {
     string uid = 1;
     string label = 2;
-    string source_id = 3;
-    string target_id = 4;
+    string source_uid = 3;
+    string target_uid = 4;
     map<string, Value> properties = 5;
 }
 
