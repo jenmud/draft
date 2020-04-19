@@ -70,12 +70,16 @@ func (g *Graph) RemoveEdge(uid string) error {
 	// (source)->(target)
 	source, err := g.Node(edge.SourceUID)
 	if err != nil {
+		// this is only here for safty, but we shoud not
+		// get into a situation where this error is returned.
 		return fmt.Errorf("[RemoveEdge] %s", err)
 	}
 	delete(source.outEdges, uid)
 
 	target, err := g.Node(edge.TargetUID)
 	if err != nil {
+		// this is only here for safty, but we shoud not
+		// get into a situation where this error is returned.
 		return fmt.Errorf("[RemoveEdge] %s", err)
 	}
 	delete(target.inEdges, uid)

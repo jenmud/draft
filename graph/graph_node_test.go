@@ -30,6 +30,12 @@ func TestRemoveNode(t *testing.T) {
 	assert.Equal(t, false, g.HasNode("abcd-1234"))
 }
 
+func TestRemoveNode_does_not_exist(t *testing.T) {
+	g := New()
+	err := g.RemoveNode("node-1")
+	assert.NotNil(t, err)
+}
+
 func TestRemoveNode_with_edges(t *testing.T) {
 	g := New()
 
