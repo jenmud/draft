@@ -11,6 +11,7 @@ message UIDReq {
 // Value is the property value.
 message Value {
     string type = 1;
+    // Note that JSON will convert this to base64 string
     bytes value = 2;
 }
 
@@ -60,7 +61,12 @@ message NodesReq {}
 message EdgesReq {}
 
 // DumpReq is a request to producting a graph dump.
-message DumpReq {}
+message DumpReq {
+    // Starting node for a subgraph. If omitted then the entire graph is dumped.
+    string node_uid = 1;
+    // How many levels to return. If omitted then the no limit is applied.
+    int32 levels = 2;
+}
 
 // DumpResp is a graph dump response.
 message DumpResp {

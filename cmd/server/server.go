@@ -22,6 +22,7 @@ type server struct {
 }
 
 func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
+	// TODO: add in the subgraph and levels
 	nodesIter := s.graph.Nodes()
 	edgesIter := s.graph.Edges()
 
