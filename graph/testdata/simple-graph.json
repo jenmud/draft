@@ -1,0 +1,69 @@
+{
+    "nodes": [
+        {
+            "uid": "node-foo",
+            "label": "person",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "value": "Zm9v"
+                }
+            }
+        },
+        {
+            "uid": "node-bar",
+            "label": "person",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "value": "YmFy"
+                }
+            }
+        },
+        {
+            "uid": "node-dog",
+            "label": "animal",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "value": "c29ja3M="
+                }
+            }
+        }
+    ],
+    "edges": [
+        {
+            "uid": "edge-like",
+            "source_uid": "node-foo",
+            "label": "likes",
+            "target_uid": "node-bar",
+            "properties": {}
+        },
+        {
+            "uid": "edge-dislike",
+            "source_uid": "node-bar",
+            "label": "dislikes",
+            "target_uid": "node-dog",
+            "properties": {}
+        },
+        {
+            "uid": "edge-knows",
+            "source_uid": "node-foo",
+            "label": "knows",
+            "target_uid": "node-bar",
+            "properties": {
+                "name": {
+                    "type": "int",
+                    "value": "MjAyMA=="
+                }
+            }
+        },
+        {
+            "uid": "edge-owns",
+            "source_uid": "node-foo",
+            "label": "owns",
+            "target_uid": "node-dog",
+            "properties": {}
+        }
+    ]
+}
