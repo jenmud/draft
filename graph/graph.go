@@ -13,6 +13,17 @@ func New() *Graph {
 	}
 }
 
+// NewFromJSON takes a JSON formatted output and returns a new Graph.
+func NewFromJSON(r io.Reader) (*Graph, error) {
+	data, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+	graph := New()
+	err = json.Unmarshal(data, graph)
+	return graph, err
+}
+
 // Graph is a graph store.
 type Graph struct {
 	lock  sync.RWMutex
