@@ -26,3 +26,8 @@ func (it *Iterator) Next() bool {
 
 	return true
 }
+
+// Size returns the count of items in the iterator.
+func (it *Iterator) Size() int {
+	return len(it.data)
+}

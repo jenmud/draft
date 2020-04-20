@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNodeIterator(t *testing.T) {
+func TestIterator(t *testing.T) {
 	item1 := 1
 	item2 := 2
 	item3 := 3
@@ -24,4 +24,9 @@ func TestNodeIterator(t *testing.T) {
 	actual3 := iter.Value()
 	assert.Equal(t, item3, actual3)
 	assert.Equal(t, false, iter.Next())
+}
+
+func TestSize(t *testing.T) {
+	iter := Iterator{data: []interface{}{1, 2, 3}}
+	assert.Equal(t, 3, iter.Size())
 }

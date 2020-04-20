@@ -6,4 +6,6 @@ type Iterator interface {
 	Value() interface{}
 	// Next progresses the iterator and return true if there are still items to iterate over.
 	Next() bool
+	// Size returns the total item count in the iterator
+	Size() int
 }
