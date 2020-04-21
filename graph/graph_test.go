@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
@@ -16,6 +17,71 @@ func readTestData(t *testing.T, name string) []byte {
 	}
 
 	return data
+}
+
+func TestSubGraph_one_level(t *testing.T) {
+	reader := bytes.NewReader(readTestData(t, "simple-graph.json"))
+	g, err := NewFromJSON(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	subg, err := g.SubGraph("node-dog", 1)
+	assert.Nil(t, err)
+
+	foo, err := subg.Node("node-foo")
+	assert.Equal(
+		t,
+		Node{
+			UID:        "node-foo",
+			Label:      "person",
+			Properties: map[string]Value{"name": {Type: "string", Value: []byte("foo")}},
+			inEdges:    map[string]struct{}{},
+			outEdges: map[string]struct{}{
+				"edge-owns": {},
+			},
+		},
+		foo,
+	)
+
+	bar, err := subg.Node("node-bar")
+	assert.Equal(
+		t,
+		Node{
+			UID:        "node-bar",
+			Label:      "person",
+			Properties: map[string]Value{"name": {Type: "string", Value: []byte("bar")}},
+			inEdges:    map[string]struct{}{},
+			outEdges: map[string]struct{}{
+				"edge-dislike": {},
+			},
+		},
+		bar,
+	)
+
+	dog, err := subg.Node("node-dog")
+	assert.Equal(
+		t,
+		Node{
+			UID:        "node-dog",
+			Label:      "animal",
+			Properties: map[string]Value{"name": {Type: "string", Value: []byte("socks")}},
+			inEdges: map[string]struct{}{
+				"edge-owns":    {},
+				"edge-dislike": {},
+			},
+			outEdges: map[string]struct{}{},
+		},
+		dog,
+	)
+
+	e1, err := subg.Edge("edge-dislike")
+	assert.Nil(t, err)
+	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog", Properties: map[string]Value{}}, e1)
+
+	e2, err := subg.Edge("edge-owns")
+	assert.Nil(t, err)
+	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog", Properties: map[string]Value{}}, e2)
 }
 
 func TestMarshalJSON(t *testing.T) {

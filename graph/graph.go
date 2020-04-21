@@ -2,7 +2,15 @@ package graph
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"io/ioutil"
 	"sync"
+)
+
+const (
+	// Unlimited is used when returning a unlimited level subgraph.
+	Unlimited = 0
 )
 
 // New returns a new empty graph.
@@ -29,6 +37,67 @@ type Graph struct {
 	lock  sync.RWMutex
 	nodes map[string]Node
 	edges map[string]Edge
+}
+
+// SubGraph takes a starting node UID and returns a new subgraph
+// with `n` levels deep. Levels `0` or `Unlimited` will return the subgraph
+// with no level limit.
+func (g *Graph) SubGraph(uid string, levels int) (*Graph, error) {
+	//TODO: add in the levels
+	subg := New()
+
+	node, err := g.Node(uid)
+	if err != nil {
+		return subg, fmt.Errorf("[SubGraph] %s", err)
+	}
+
+	var addClosure func(edge Edge) error
+
+	addClosure = func(edge Edge) error {
+		source, err := g.Node(edge.SourceUID)
+		if err != nil {
+			return fmt.Errorf("[SubGraph] %s", err)
+		}
+
+		target, err := g.Node(edge.TargetUID)
+		if err != nil {
+			return fmt.Errorf("[SubGraph] %s", err)
+		}
+
+		// Add the node and continue if they are already in the graph.
+		subg.AddNode(source.UID, source.Label, convertPropertiesToKV(source.Properties)...)
+		subg.AddNode(target.UID, target.Label, convertPropertiesToKV(target.Properties)...)
+
+		if _, err := subg.AddEdge(edge.UID, source.UID, edge.Label, target.UID, convertPropertiesToKV(edge.Properties)...); err != nil {
+			return fmt.Errorf("[SubGraph] %s", err)
+		}
+
+		return nil
+	}
+
+	for edgeUID := range node.inEdges {
+		edge, err := g.Edge(edgeUID)
+		if err != nil {
+			return subg, fmt.Errorf("[SubGraph] %s", err)
+		}
+
+		if err := addClosure(edge); err != nil {
+			return subg, err
+		}
+	}
+
+	for edgeUID := range node.outEdges {
+		edge, err := g.Edge(edgeUID)
+		if err != nil {
+			return subg, fmt.Errorf("[SubGraph] %s", err)
+		}
+
+		if err := addClosure(edge); err != nil {
+			return subg, err
+		}
+	}
+
+	return subg, nil
 }
 
 // See graph_node.go for all the node related methods
