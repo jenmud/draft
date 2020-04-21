@@ -19,13 +19,14 @@ var (
 )
 
 func init() {
-	store := graph.New()
+	store = graph.New()
 
 	flag.StringVar(&addr, "addr", addr, "Address and port to service and accept client connections.")
 	dumpfile := flag.String("dump", "", "Load a dump (.draft) file.")
 	flag.Parse()
 
 	if dumpfile != nil && *dumpfile != "" {
+		log.Printf("Loading from %s", *dumpfile)
 		data, err := ioutil.ReadFile(*dumpfile)
 		if err != nil {
 			log.Fatal(err)
@@ -67,7 +68,7 @@ func run(address string) error {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterGraphServer(s, &server{graph: graph.New()})
+	pb.RegisterGraphServer(s, &server{graph: store})
 
 	log.Printf("[%s] Service accepting connections on %s", "run", listener.Addr())
 	return s.Serve(listener)
