@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"io"
 
 	"github.com/jenmud/draft/graph"
 	pb "github.com/jenmud/draft/service"
+	"google.golang.org/protobuf/proto"
 )
 
 func convertGraphPropsToServiceProps(props map[string]graph.Value) map[string]*pb.Value {
@@ -17,8 +19,37 @@ func convertGraphPropsToServiceProps(props map[string]graph.Value) map[string]*p
 	return p
 }
 
+func convertServicePropsToGraphKVs(props map[string]*pb.Value) []graph.KV {
+	kvs := make([]graph.KV, len(props))
+
+	count := 0
+	for k, v := range props {
+		kv := graph.KV{Key: k, Value: graph.Value{Type: v.Type, Value: v.Value}}
+		kvs[count] = kv
+		count++
+	}
+
+	return kvs
+}
+
 type server struct {
 	graph *graph.Graph
+}
+
+// Save the current graph.
+func (s *server) Save(w io.Writer) error {
+	dump, err := s.Dump(context.Background(), &pb.DumpReq{})
+	if err != nil {
+		return err
+	}
+
+	output, err := proto.Marshal(dump)
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write(output)
+	return err
 }
 
 func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
