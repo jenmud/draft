@@ -68,8 +68,19 @@ func run(address string) error {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterGraphServer(s, &server{graph: store})
+	server := &server{graph: store}
+	pb.RegisterGraphServer(s, server)
 
+	// c := make(chan os.Signal, 1)
+
+	// go func() {
+	// 	<-c
+	// 	var b bytes.Buffer
+	// 	server.Save(&b)
+	// 	ioutil.WriteFile("../web/example/dump.draft", b.Bytes(), 0644)
+	// }()
+
+	// signal.Notify(c, os.Interrupt)
 	log.Printf("[%s] Service accepting connections on %s", "run", listener.Addr())
 	return s.Serve(listener)
 }

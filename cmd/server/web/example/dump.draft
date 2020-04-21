@@ -7,8 +7,11 @@ $
 barPerson
 name
 stringbar
-$
-sockPet
+%
+socksPet
 name
 stringsocks
-foo-barknowsfoo"bar
+foo-barknowsfoo"bar
+	foo-socksownsfoo"socks!
+	bar-socksdislikesbar"socks$
+bar-kicks-sockskicksbar"socks
