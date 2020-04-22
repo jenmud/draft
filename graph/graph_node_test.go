@@ -137,3 +137,13 @@ func TestUpdateNode_missing_node(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, updated, n1)
 }
+
+func TestNodeCount(t *testing.T) {
+	g := New()
+
+	g.AddNode("node-1", "person")
+	g.AddNode("node-2", "person")
+	g.AddNode("node-3", "person")
+
+	assert.Equal(t, 3, g.NodeCount())
+}

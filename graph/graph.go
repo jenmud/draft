@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"runtime"
 	"sync"
+	"time"
 )
 
 const (
@@ -16,8 +18,9 @@ const (
 // New returns a new empty graph.
 func New() *Graph {
 	return &Graph{
-		nodes: make(map[string]Node),
-		edges: make(map[string]Edge),
+		startTime: time.Now().UTC(),
+		nodes:     make(map[string]Node),
+		edges:     make(map[string]Edge),
 	}
 }
 
@@ -34,9 +37,28 @@ func NewFromJSON(r io.Reader) (*Graph, error) {
 
 // Graph is a graph store.
 type Graph struct {
-	lock  sync.RWMutex
-	nodes map[string]Node
-	edges map[string]Edge
+	lock      sync.RWMutex
+	startTime time.Time
+	nodes     map[string]Node
+	edges     map[string]Edge
+}
+
+// Stats returns some stats on the current graph instance.
+func (g *Graph) Stats() Stat {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+
+	s := Stat{
+		StartTime:     g.startTime,
+		NumCPU:        runtime.NumCPU(),
+		NumGoroutings: runtime.NumGoroutine(),
+		NodeCount:     g.NodeCount(),
+		EdgeCount:     g.EdgeCount(),
+	}
+
+	runtime.ReadMemStats(&s.MemStats)
+
+	return s
 }
 
 // SubGraph takes a starting node UID and returns a new subgraph

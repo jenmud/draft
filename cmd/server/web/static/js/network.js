@@ -30,6 +30,7 @@ function convertJSON(data) {
             to: element.target_uid,
             group: element.label,
             properties: {},
+            arrows: "to",
         }
 
         for (var key in element.properties) {
@@ -50,7 +51,7 @@ fetch("/assets/json")
     .then((store) => {
         console.debug(store);
 
-        var options = {};
+        var options = { physics: { solver: "forceAtlas2Based" } };
         var container = document.getElementById('graph');
         var network = new vis.Network(container, store, options);
 

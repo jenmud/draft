@@ -123,3 +123,10 @@ func (g *Graph) Edges() Iterator {
 
 	return iterator.New(edges)
 }
+
+// EdgeCount returns the total number of edges in the graph.
+func (g *Graph) EdgeCount() int {
+	g.lock.RLock()
+	defer g.lock.RUnlock()
+	return len(g.edges)
+}

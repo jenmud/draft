@@ -199,3 +199,16 @@ func TestUpdateEdge_missing_edge(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, updated, old)
 }
+
+func TestEdgeCount(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	g.AddEdge("edge-1", n1.UID, "knows", n2.UID)
+	g.AddEdge("edge-2", n1.UID, "knows", n2.UID)
+	g.AddEdge("edge-3", n1.UID, "knows", n2.UID)
+
+	assert.Equal(t, 3, g.EdgeCount())
+}

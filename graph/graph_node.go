@@ -88,3 +88,10 @@ func (g *Graph) Nodes() Iterator {
 
 	return iterator.New(nodes)
 }
+
+// NodeCount returns the total number of nodes in the graph.
+func (g *Graph) NodeCount() int {
+	g.lock.RLock()
+	defer g.lock.RUnlock()
+	return len(g.nodes)
+}
