@@ -33,6 +33,8 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, er
 		Uid:        node.UID,
 		Label:      node.Label,
 		Properties: convertGraphPropsToServiceProps(node.Properties),
+		InEdges:    node.InEdges(),
+		OutEdges:   node.OutEdges(),
 	}
 
 	return &resp, nil
@@ -55,14 +57,30 @@ func (s *server) Node(ctx context.Context, req *pb.UIDReq) (*pb.NodeResp, error)
 		return nil, err
 	}
 
-	return &pb.NodeResp{Uid: node.UID, Label: node.Label, Properties: convertGraphPropsToServiceProps(node.Properties)}, nil
+	resp := &pb.NodeResp{
+		Uid:        node.UID,
+		Label:      node.Label,
+		Properties: convertGraphPropsToServiceProps(node.Properties),
+		InEdges:    node.InEdges(),
+		OutEdges:   node.OutEdges(),
+	}
+
+	return resp, nil
 }
 
 func (s *server) Nodes(req *pb.NodesReq, stream pb.Graph_NodesServer) error {
 	iter := s.graph.Nodes()
 	for iter.Next() {
 		node := iter.Value().(graph.Node)
-		resp := pb.NodeResp{Uid: node.UID, Label: node.Label, Properties: convertGraphPropsToServiceProps(node.Properties)}
+
+		resp := pb.NodeResp{
+			Uid:        node.UID,
+			Label:      node.Label,
+			Properties: convertGraphPropsToServiceProps(node.Properties),
+			InEdges:    node.InEdges(),
+			OutEdges:   node.OutEdges(),
+		}
+
 		if err := stream.Send(&resp); err != nil {
 			return nil
 		}

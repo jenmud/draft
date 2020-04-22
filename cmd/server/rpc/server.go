@@ -83,6 +83,8 @@ func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error
 			Uid:        node.UID,
 			Label:      node.Label,
 			Properties: convertGraphPropsToServiceProps(node.Properties),
+			InEdges:    node.InEdges(),
+			OutEdges:   node.OutEdges(),
 		}
 		dump.Nodes[ncount] = resp
 		ncount++
