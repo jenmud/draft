@@ -27,6 +27,8 @@ message NodeResp {
     string uid = 1;
     string label = 2;
     map<string, Value> properties = 3;
+    repeated string in_edges = 4;
+    repeated string out_edges = 5;
 }
 
 // EdgeReq is a edge request.

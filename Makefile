@@ -1,7 +1,7 @@
 all: go-proto
 
 go-proto:
-	protoc --proto_path=./service --go_out=plugins=grpc:./service service.proto
+	protoc --proto_path=./proto --go_out=plugins=grpc:./service service.proto
 
 # js-proto:
 # 	mkdir -p ./service/js
