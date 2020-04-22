@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -100,6 +101,12 @@ func TestMarshalJSON(t *testing.T) {
 	assert.Nil(t, err)
 
 	actual := New()
+
+	// Hack the start times as they are not testable
+	now := time.Now()
+	g.startTime = now
+	actual.startTime = now
+
 	err = json.Unmarshal(dump, &actual)
 	assert.Nil(t, err)
 
