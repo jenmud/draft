@@ -51,7 +51,30 @@ fetch("/assets/json")
     .then((store) => {
         console.debug(store);
 
-        var options = { physics: { solver: "forceAtlas2Based" } };
+        var options = {
+            height: '100%',
+            width: '100%',
+            nodes: {
+                scaling: { min: 10, max: 20 },
+                chosen: {
+                    node: (values, id, selected, hovering) => {
+                        values.color = "#ffe6e6";
+                        values.shadow = true;
+                    }
+                },
+            },
+            edges: {
+                chosen: {
+                    edge: (values, id, selected, hovering) => {
+                        values.color = "red";
+                    },
+                },
+            },
+            physics: {
+                solver: "forceAtlas2Based",
+            }
+        };
+
         var container = document.getElementById('graph');
         var network = new vis.Network(container, store, options);
 
