@@ -36,6 +36,20 @@ type server struct {
 	graph *graph.Graph
 }
 
+func (s *server) Stats(ctx context.Context, req *pb.StatsReq) (*pb.StatsResp, error) {
+	stats := s.graph.Stats()
+	resp := &pb.StatsResp{
+		NumCpu:           int32(stats.NumCPU),
+		NodeCount:        int32(stats.NodeCount),
+		EdgeCount:        int32(stats.EdgeCount),
+		StartTime:        stats.StartTime.String(),
+		NumGoroutines:    int32(stats.NumGoroutings),
+		TotalMemoryAlloc: int32(stats.MemStats.TotalAlloc),
+	}
+
+	return resp, nil
+}
+
 // Save the current graph.
 func (s *server) Save(w io.Writer) error {
 	dump, err := s.Dump(context.Background(), &pb.DumpReq{})
