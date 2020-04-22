@@ -147,3 +147,48 @@ func TestNodeCount(t *testing.T) {
 
 	assert.Equal(t, 3, g.NodeCount())
 }
+
+func TestNode_InEdges(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+	n3, _ := g.AddNode("node-3", "person")
+
+	g.AddEdge("edge-knows", n1.UID, "knows", n2.UID)
+	g.AddEdge("edge-likes", n1.UID, "likes", n2.UID)
+	g.AddEdge("edge-dislikes", n3.UID, "dislikes", n1.UID)
+
+	expected := []string{"edge-dislikes"}
+	assert.ElementsMatch(t, expected, n1.InEdges())
+}
+
+func TestNode_OutEdges(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+	n3, _ := g.AddNode("node-3", "person")
+
+	g.AddEdge("edge-knows", n1.UID, "knows", n2.UID)
+	g.AddEdge("edge-likes", n1.UID, "likes", n2.UID)
+	g.AddEdge("edge-dislikes", n3.UID, "dislikes", n1.UID)
+
+	expected := []string{"edge-knows", "edge-likes"}
+	assert.ElementsMatch(t, expected, n1.OutEdges())
+}
+
+func TestNode_Edges(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+	n3, _ := g.AddNode("node-3", "person")
+
+	g.AddEdge("edge-knows", n1.UID, "knows", n2.UID)
+	g.AddEdge("edge-likes", n1.UID, "likes", n2.UID)
+	g.AddEdge("edge-dislikes", n3.UID, "dislikes", n1.UID)
+
+	expected := []string{"edge-knows", "edge-likes", "edge-dislikes"}
+	assert.ElementsMatch(t, expected, n1.Edges())
+}
