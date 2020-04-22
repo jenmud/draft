@@ -74,6 +74,27 @@ message DumpResp {
     repeated EdgeResp edges = 2;
 }
 
+// StatsReq is a stats message containing inforamtion about the service.
+message StatsReq {
+}
+
+// StatsResp is the stats response with information about the service.
+message StatsResp {
+    // start time in UTC when the instance started.
+    string start_time = 1;
+    // number of CPUS available.
+    int32 num_cpu = 2;
+    // number of goroutings running.
+    int32 num_goroutines = 3;
+    // number of nodes in the graph.
+    int32 node_count = 4;
+    // number of edges in the graph.
+    int32 edge_count = 5;
+    // total memory allocated in bytes.
+    int32 total_memory_alloc = 6;
+}
+
+
 // Graph is the graph service.
 service Graph {
     // AddNode adds a node to the graph.
@@ -93,6 +114,9 @@ service Graph {
     rpc Edge (UIDReq) returns (EdgeResp);
     // Edges returns all the edges in the graph.
     rpc Edges (EdgesReq) returns (stream EdgeResp);
+
+    // Stats returns some stats about the service.
+    rpc Stats(StatsReq) returns (StatsResp);
 
     // Dump the graph.
     rpc Dump(DumpReq) returns (DumpResp);
