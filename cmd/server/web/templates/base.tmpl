@@ -37,7 +37,7 @@
           </div>
         <main class="mdl-layout__content">
             <div class="mdl-grid" style="height: 98%;">
-                <div class="mdl-cell mdl-cell--2-col">
+                <div class="mdl-cell mdl-cell--4-col">
                     <div class="mdl-card mdl-shadow--2dp" style="width: 100%;">
                         <div class="mdl-card__title"><h2 class="mdl-card__title-text">Information</h2></div>
                         <div class="mdl-card__supporting-text">
@@ -50,27 +50,35 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="mdl-data-table__cell--non-numeric">Uptime</td>
-                                        <td class="mdl-data-table__cell--non-numeric">Unknown</td>
+                                        <td class="mdl-data-table__cell--non-numeric">StartTime</td>
+                                        <td id="startTime" class="mdl-data-table__cell--non-numeric">Unknown</td>
                                     </tr>
                                     <tr>
-                                        <td class="mdl-data-table__cell--non-numeric">Memory Usage</td>
-                                        <td class="mdl-data-table__cell--numeric">0</td>
+                                        <td class="mdl-data-table__cell--non-numeric">CPU count</td>
+                                        <td id="cpuCount" class="mdl-data-table__cell--numeric">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">Goroutine count</td>
+                                        <td id="goroutineCount" class="mdl-data-table__cell--numeric">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">Memory Usage (bytes)</td>
+                                        <td id="memUsage" class="mdl-data-table__cell--numeric">0</td>
                                     </tr>
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">Node count</td>
-                                        <td class="mdl-data-table__cell--numeric">0</td>
+                                        <td id="nodeCount" class="mdl-data-table__cell--numeric">0</td>
                                     </tr>
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">Edge count</td>
-                                        <td class="mdl-data-table__cell--numeric">0</td>
+                                        <td id="edgeCount" class="mdl-data-table__cell--numeric">0</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="mdl-cell mdl-cell--10-col">
+                <div class="mdl-cell mdl-cell--8-col">
                     <div class="mdl-card mdl-shadow--2dp" style="width: 100%; height: 100%">
                         <div class="mdl-card__title"><h2 class="mdl-card__title-text">Lense</h2></div>
                         <div id="graph" class="mdl-card__supporting-text">
@@ -82,6 +90,7 @@
     </div>
 
     <script src="/static/js/network.js"></script>
+    <script src="/static/js/stats.js"></script>
 </body>
 
 </html>
