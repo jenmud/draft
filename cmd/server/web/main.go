@@ -77,11 +77,30 @@ func assetJSON(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+// statsJSON serves JSON stats.
+func statsJSON(w http.ResponseWriter, r *http.Request) {
+	dump, err := client.Stats(r.Context(), &pb.StatsReq{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	data, err := json.Marshal(dump)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(data)
+}
+
 // run start the RPC service.
 func run(address string) error {
 	router := mux.NewRouter()
 	router.HandleFunc("/", index)
 	router.HandleFunc("/assets/json", assetJSON)
+	router.HandleFunc("/stats/json", statsJSON)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
 	log.Printf("[%s] Service accepting connections on %s", "run", address)
 	return http.ListenAndServe(address, router)
