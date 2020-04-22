@@ -16,6 +16,7 @@ import (
 var (
 	addr      = ":8080"
 	templates = packr.New("templates", "./templates")
+	static    = packr.New("static", "./static")
 	client    pb.GraphClient
 )
 
@@ -81,6 +82,7 @@ func run(address string) error {
 	router := mux.NewRouter()
 	router.HandleFunc("/", index)
 	router.HandleFunc("/assets/json", assetJSON)
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
 	log.Printf("[%s] Service accepting connections on %s", "run", address)
 	return http.ListenAndServe(address, router)
 }
