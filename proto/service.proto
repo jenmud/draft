@@ -96,6 +96,19 @@ message StatsResp {
     int32 total_memory_alloc = 6;
 }
 
+// Filter is a rule for filtering when doing a search.
+message Filter {
+    // type of filter to be applied, eg: label, property
+    string type = 1;
+    // value to filter for eg: Value{Type: "string", Value:"name"}
+    Value value = 2;
+}
+
+// FilterReq used for searching
+message FilterReq {
+    repeated Filter filter = 1;
+}
+
 
 // Graph is the graph service.
 service Graph {
@@ -107,6 +120,8 @@ service Graph {
     rpc Node (UIDReq) returns (NodeResp);
     // Nodes returns all the node in the graph.
     rpc Nodes (NodesReq) returns (stream NodeResp);
+    // FindNode filter for node matching the filters.
+    rpc FindNode(FilterReq) returns (stream NodeResp);
 
     // AddEdge adds a edge to the graph.
     rpc AddEdge (EdgeReq) returns (EdgeResp);

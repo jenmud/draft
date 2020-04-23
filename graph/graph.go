@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"sync"
 	"time"
+
+	"github.com/jenmud/draft/graph/iterator"
 )
 
 const (
@@ -59,6 +61,25 @@ func (g *Graph) Stats() Stat {
 	runtime.ReadMemStats(&s.MemStats)
 
 	return s
+}
+
+// Find takes one or more filters and returns nodes/edges which match the
+// filter criteria using a MapReduce strategy.
+func (g *Graph) Find(itemType ItemType, filter ...Filter) Iterator {
+	// search plan is to first filter for nodes that match the label
+	// then use the label filtered set and search for properties.
+
+	// Map: slice jobs and distrubute
+	// Reduce:
+
+	switch itemType {
+	case NODE:
+		return mapper(g.Nodes(), itemType, filter...)
+	case EDGE:
+		return mapper(g.Edges(), itemType, filter...)
+	}
+
+	return &iterator.Iterator{}
 }
 
 // SubGraph takes a starting node UID and returns a new subgraph
