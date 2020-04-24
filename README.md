@@ -2,6 +2,8 @@
 
 Draft is is a simple, easy to use, and lightweight in memory graph store written in go.
 
+**Please note that this is still under development and not ready for production use!**
+
 ## Run GRPC server
 
 ```bash
