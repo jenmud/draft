@@ -26,13 +26,11 @@ func TestFind__by_label(t *testing.T) {
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
 	g.AddNode("node-3", "animal")
-	n4, _ := g.AddNode("node-4", "pet")
+	g.AddNode("node-4", "pet")
 
-	person := Filter{Type: LABEL, Value: []byte("person")}
-	pet := Filter{Type: LABEL, Value: []byte("pet")}
-	iter := g.Find(NODE, person, pet)
+	iter := g.Find(NODE, KV{Key: "person"})
 
-	expected := []Node{n1, n2, n4}
+	expected := []Node{n1, n2}
 	actual := make([]Node, iter.Size())
 	count := 0
 	for iter.Next() {

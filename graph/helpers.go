@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/jenmud/draft/graph/iterator"
+import "fmt"
 
 // convertPropertiesToKV converts a Property map to a array of key values.
 func convertPropertiesToKV(props map[string][]byte) []KV {
@@ -14,23 +14,26 @@ func convertPropertiesToKV(props map[string][]byte) []KV {
 	return kvs
 }
 
-// mapper is used to run throug the items in the iterator
-// sorting items into sorted piles.
-// TODO: this should take some sort of interface
-func mapper(iter Iterator, itemType ItemType, filter ...Filter) Iterator {
-	mapped := []interface{}{}
-
+func mapperNode(iter Iterator, out chan<- Node) {
 	for iter.Next() {
-		item := iter.Value().(Node)
-		for _, f := range filter {
-			switch f.Type {
-			case LABEL:
-				if item.Label == string(f.Value) {
-					mapped = append(mapped, iter.Value())
-				}
+		node := iter.Value().(Node)
+		out <- node
+	}
+	close(out)
+}
+
+// reducer is the filter.
+func reducerNode(filter FilterType, kv KV, in chan Node, out chan Node) {
+	for node := range in {
+		switch filter {
+		case LABEL:
+			if node.Label == kv.Key {
+				out <- node
 			}
+		default:
+			panic(fmt.Sprintf("Filter %v is not supported", filter))
 		}
 	}
 
-	return iterator.New(mapped)
+	close(out)
 }

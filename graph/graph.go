@@ -65,21 +65,22 @@ func (g *Graph) Stats() Stat {
 
 // Find takes one or more filters and returns nodes/edges which match the
 // filter criteria using a MapReduce strategy.
-func (g *Graph) Find(itemType ItemType, filter ...Filter) Iterator {
-	// search plan is to first filter for nodes that match the label
-	// then use the label filtered set and search for properties.
+func (g *Graph) Find(itemType ItemType, kv KV) Iterator {
+	fmt.Printf("Running find on nodes")
 
-	// Map: slice jobs and distrubute
-	// Reduce:
+	nodes := g.Nodes()
+	in := make(chan Node, nodes.Size())
+	filtered := make(chan Node, nodes.Size())
 
-	switch itemType {
-	case NODE:
-		return mapper(g.Nodes(), itemType, filter...)
-	case EDGE:
-		return mapper(g.Edges(), itemType, filter...)
+	go mapperNode(nodes, in)
+	go reducerNode(LABEL, kv, in, filtered)
+
+	items := []interface{}{}
+	for f := range filtered {
+		items = append(items, f)
 	}
 
-	return &iterator.Iterator{}
+	return iterator.New(items)
 }
 
 // SubGraph takes a starting node UID and returns a new subgraph
