@@ -66,8 +66,6 @@ func (g *Graph) Stats() Stat {
 // Find takes one or more filters and returns nodes/edges which match the
 // filter criteria using a MapReduce strategy.
 func (g *Graph) Find(itemType ItemType, kv KV) Iterator {
-	fmt.Printf("Running find on nodes")
-
 	nodes := g.Nodes()
 	in := make(chan Node, nodes.Size())
 	filtered := make(chan Node, nodes.Size())
