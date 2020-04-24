@@ -12,8 +12,8 @@ func TestAddEdge(t *testing.T) {
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
 
-	expected := NewEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
-	actual, err := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	expected := NewEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	actual, err := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 
 	assert.Nil(t, err)
 	assert.Equal(t, expected, actual)
@@ -32,7 +32,7 @@ func TestAddEdge_missing_source(t *testing.T) {
 	g := New()
 
 	n2, _ := g.AddNode("node-2", "person")
-	actual, err := g.AddEdge("edge-1234", "nissing", "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	actual, err := g.AddEdge("edge-1234", "nissing", "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 
 	assert.NotNil(t, err)
 	assert.Equal(t, Edge{}, actual)
@@ -42,7 +42,7 @@ func TestAddEdge_missing_target(t *testing.T) {
 	g := New()
 
 	n1, _ := g.AddNode("node-1", "person")
-	actual, err := g.AddEdge("edge-1234", n1.UID, "knows", "missing", KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	actual, err := g.AddEdge("edge-1234", n1.UID, "knows", "missing", KV{Key: "since", Value: []byte("school")})
 
 	assert.NotNil(t, err)
 	assert.Equal(t, Edge{}, actual)
@@ -53,8 +53,8 @@ func TestAddEdge_duplicate_uid(t *testing.T) {
 
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
-	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
-	actual, err := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	actual, err := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 
 	assert.NotNil(t, err)
 	assert.Equal(t, Edge{}, actual)
@@ -65,7 +65,7 @@ func TestHasEdge(t *testing.T) {
 
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
-	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 
 	assert.Equal(t, true, g.HasEdge("edge-1234"))
 }
@@ -75,7 +75,7 @@ func TestHasEdge_missing(t *testing.T) {
 
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
-	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 
 	assert.Equal(t, false, g.HasEdge("missing"))
 }
@@ -87,7 +87,7 @@ func TestRemoveEdge(t *testing.T) {
 	n2, _ := g.AddNode("node-2", "person")
 	n3, _ := g.AddNode("node-3", "person")
 
-	edge1, _ := g.AddEdge("edge-1", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	edge1, _ := g.AddEdge("edge-1", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 	edge2, _ := g.AddEdge("edge-2", n1.UID, "knows", n3.UID)
 
 	err := g.RemoveEdge("edge-1")
@@ -122,7 +122,7 @@ func TestEdge(t *testing.T) {
 
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
-	expected, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	expected, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 	actual, err := g.Edge("edge-1234")
 
 	assert.Nil(t, err)
@@ -166,8 +166,8 @@ func TestUpdateEdge(t *testing.T) {
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
 
-	old, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
-	old.Properties["since"] = Value{Type: "int", Value: []byte("2020")}
+	old, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	old.Properties["since"] = []byte("2020")
 
 	updated, err := g.UpdateEdge(old)
 
@@ -190,10 +190,10 @@ func TestUpdateEdge_missing_edge(t *testing.T) {
 	n1, _ := g.AddNode("node-1", "person")
 	n2, _ := g.AddNode("node-2", "person")
 
-	old, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: Value{Type: "string", Value: []byte("school")}})
+	old, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
 	g.RemoveEdge(old.UID)
 
-	old.Properties["since"] = Value{Type: "int", Value: []byte("2020")}
+	old.Properties["since"] = []byte("2020")
 
 	updated, err := g.UpdateEdge(old)
 	assert.NotNil(t, err)

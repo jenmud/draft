@@ -28,8 +28,8 @@ func TestFind__by_label(t *testing.T) {
 	g.AddNode("node-3", "animal")
 	n4, _ := g.AddNode("node-4", "pet")
 
-	person := Filter{Type: LABEL, Value: Value{Type: "string", Value: []byte("person")}}
-	pet := Filter{Type: LABEL, Value: Value{Type: "string", Value: []byte("pet")}}
+	person := Filter{Type: LABEL, Value: []byte("person")}
+	pet := Filter{Type: LABEL, Value: []byte("pet")}
 	iter := g.Find(NODE, person, pet)
 
 	expected := []Node{n1, n2, n4}
@@ -59,7 +59,7 @@ func TestSubGraph_one_level(t *testing.T) {
 		Node{
 			UID:        "node-foo",
 			Label:      "person",
-			Properties: map[string]Value{"name": {Type: "string", Value: []byte("foo")}},
+			Properties: map[string][]byte{"name": []byte("foo")},
 			inEdges:    map[string]struct{}{},
 			outEdges: map[string]struct{}{
 				"edge-owns": {},
@@ -74,7 +74,7 @@ func TestSubGraph_one_level(t *testing.T) {
 		Node{
 			UID:        "node-bar",
 			Label:      "person",
-			Properties: map[string]Value{"name": {Type: "string", Value: []byte("bar")}},
+			Properties: map[string][]byte{"name": []byte("bar")},
 			inEdges:    map[string]struct{}{},
 			outEdges: map[string]struct{}{
 				"edge-dislike": {},
@@ -89,7 +89,7 @@ func TestSubGraph_one_level(t *testing.T) {
 		Node{
 			UID:        "node-dog",
 			Label:      "animal",
-			Properties: map[string]Value{"name": {Type: "string", Value: []byte("socks")}},
+			Properties: map[string][]byte{"name": []byte("socks")},
 			inEdges: map[string]struct{}{
 				"edge-owns":    {},
 				"edge-dislike": {},
@@ -101,21 +101,21 @@ func TestSubGraph_one_level(t *testing.T) {
 
 	e1, err := subg.Edge("edge-dislike")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog", Properties: map[string]Value{}}, e1)
+	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog"}, e1)
 
 	e2, err := subg.Edge("edge-owns")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog", Properties: map[string]Value{}}, e2)
+	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog"}, e2)
 }
 
 func TestMarshalJSON(t *testing.T) {
 	g := New()
 
-	n1, _ := g.AddNode("node-foo", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	n2, _ := g.AddNode("node-bar", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("bar")}})
-	n3, _ := g.AddNode("node-dog", "animal", KV{Key: "name", Value: Value{Type: "string", Value: []byte("socks")}})
+	n1, _ := g.AddNode("node-foo", "person", KV{Key: "name", Value: []byte("foo")})
+	n2, _ := g.AddNode("node-bar", "person", KV{Key: "name", Value: []byte("bar")})
+	n3, _ := g.AddNode("node-dog", "animal", KV{Key: "name", Value: []byte("socks")})
 
-	g.AddEdge("edge-knows", n1.UID, "knows", n2.UID, KV{Key: "name", Value: Value{Type: "int", Value: []byte("2020")}})
+	g.AddEdge("edge-knows", n1.UID, "knows", n2.UID, KV{Key: "name", Value: []byte("2020")})
 	g.AddEdge("edge-owns", n1.UID, "owns", n3.UID)
 	g.AddEdge("edge-like", n1.UID, "likes", n2.UID)
 	g.AddEdge("edge-dislike", n2.UID, "dislikes", n3.UID)
@@ -151,7 +151,7 @@ func TestUnmarshalJSON(t *testing.T) {
 		Node{
 			UID:        "node-foo",
 			Label:      "person",
-			Properties: map[string]Value{"name": {Type: "string", Value: []byte("foo")}},
+			Properties: map[string][]byte{"name": []byte("foo")},
 			inEdges:    map[string]struct{}{},
 			outEdges: map[string]struct{}{
 				"edge-like":  {},
@@ -169,7 +169,7 @@ func TestUnmarshalJSON(t *testing.T) {
 		Node{
 			UID:        "node-bar",
 			Label:      "person",
-			Properties: map[string]Value{"name": {Type: "string", Value: []byte("bar")}},
+			Properties: map[string][]byte{"name": []byte("bar")},
 			inEdges: map[string]struct{}{
 				"edge-like":  {},
 				"edge-knows": {},
@@ -188,7 +188,7 @@ func TestUnmarshalJSON(t *testing.T) {
 		Node{
 			UID:        "node-dog",
 			Label:      "animal",
-			Properties: map[string]Value{"name": {Type: "string", Value: []byte("socks")}},
+			Properties: map[string][]byte{"name": []byte("socks")},
 			inEdges: map[string]struct{}{
 				"edge-dislike": {},
 				"edge-owns":    {},
@@ -200,17 +200,17 @@ func TestUnmarshalJSON(t *testing.T) {
 
 	e1, err := g.Edge("edge-like")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-like", SourceUID: "node-foo", Label: "likes", TargetUID: "node-bar", Properties: map[string]Value{}}, e1)
+	assert.Equal(t, Edge{UID: "edge-like", SourceUID: "node-foo", Label: "likes", TargetUID: "node-bar"}, e1)
 
 	e2, err := g.Edge("edge-dislike")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog", Properties: map[string]Value{}}, e2)
+	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog"}, e2)
 
 	e3, err := g.Edge("edge-knows")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-knows", SourceUID: "node-foo", Label: "knows", TargetUID: "node-bar", Properties: map[string]Value{"name": Value{Type: "int", Value: []byte("2020")}}}, e3)
+	assert.Equal(t, Edge{UID: "edge-knows", SourceUID: "node-foo", Label: "knows", TargetUID: "node-bar", Properties: map[string][]byte{"since": []byte("2020")}}, e3)
 
 	e4, err := g.Edge("edge-owns")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog", Properties: map[string]Value{}}, e4)
+	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog"}, e4)
 }

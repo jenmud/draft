@@ -3,7 +3,7 @@ package graph
 import "github.com/jenmud/draft/graph/iterator"
 
 // convertPropertiesToKV converts a Property map to a array of key values.
-func convertPropertiesToKV(props map[string]Value) []KV {
+func convertPropertiesToKV(props map[string][]byte) []KV {
 	kvs := make([]KV, len(props))
 
 	count := 0
@@ -25,7 +25,7 @@ func mapper(iter Iterator, itemType ItemType, filter ...Filter) Iterator {
 		for _, f := range filter {
 			switch f.Type {
 			case LABEL:
-				if item.Label == string(f.Value.Value) {
+				if item.Label == string(f.Value) {
 					mapped = append(mapped, iter.Value())
 				}
 			}

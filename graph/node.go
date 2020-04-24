@@ -13,9 +13,9 @@ func NewNode(uid, label string, kv ...KV) Node {
 
 // Node is a node in the graph.
 type Node struct {
-	UID        string           `json:"uid"`
-	Label      string           `json:"label"`
-	Properties map[string]Value `json:"properties"`
+	UID        string            `json:"uid"`
+	Label      string            `json:"label"`
+	Properties map[string][]byte `json:"properties"`
 	inEdges    map[string]struct{}
 	outEdges   map[string]struct{}
 }

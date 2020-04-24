@@ -14,7 +14,7 @@ function convertJSON(data) {
         }
 
         for (var key in element.properties) {
-            node.properties[key] = atob(element.properties[key].value);
+            node.properties[key] = atob(element.properties[key]);
         }
 
         console.debug(element);
@@ -34,7 +34,7 @@ function convertJSON(data) {
         }
 
         for (var key in element.properties) {
-            edge.properties[key] = atob(element.properties[key].value);
+            edge.properties[key] = atob(element.properties[key]);
         }
 
         console.debug(element);

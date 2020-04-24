@@ -14,7 +14,7 @@ func TestMapper(t *testing.T) {
 	n4 := NewNode("node-3", "pet")
 
 	iter := iterator.New([]interface{}{n1, n2, n3, n4})
-	filter := Filter{Type: LABEL, Value: Value{Type: "string", Value: []byte("person")}}
+	filter := Filter{Type: LABEL, Value: []byte("person")}
 
 	mappedIter := mapper(iter, NODE, filter)
 	actual := []interface{}{}

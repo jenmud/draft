@@ -12,15 +12,7 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, er
 
 	count := 0
 	for k, v := range req.Properties {
-		kv := graph.KV{
-			Key: k,
-			Value: graph.Value{
-				Type:  v.Type,
-				Value: v.Value,
-			},
-		}
-
-		kvs[count] = kv
+		kvs[count] = graph.KV{Key: k, Value: v}
 		count++
 	}
 
@@ -32,7 +24,7 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, er
 	resp := pb.NodeResp{
 		Uid:        node.UID,
 		Label:      node.Label,
-		Properties: convertGraphPropsToServiceProps(node.Properties),
+		Properties: node.Properties,
 		InEdges:    node.InEdges(),
 		OutEdges:   node.OutEdges(),
 	}
@@ -60,7 +52,7 @@ func (s *server) Node(ctx context.Context, req *pb.UIDReq) (*pb.NodeResp, error)
 	resp := &pb.NodeResp{
 		Uid:        node.UID,
 		Label:      node.Label,
-		Properties: convertGraphPropsToServiceProps(node.Properties),
+		Properties: node.Properties,
 		InEdges:    node.InEdges(),
 		OutEdges:   node.OutEdges(),
 	}
@@ -76,7 +68,7 @@ func (s *server) Nodes(req *pb.NodesReq, stream pb.Graph_NodesServer) error {
 		resp := pb.NodeResp{
 			Uid:        node.UID,
 			Label:      node.Label,
-			Properties: convertGraphPropsToServiceProps(node.Properties),
+			Properties: node.Properties,
 			InEdges:    node.InEdges(),
 			OutEdges:   node.OutEdges(),
 		}
@@ -87,4 +79,8 @@ func (s *server) Nodes(req *pb.NodesReq, stream pb.Graph_NodesServer) error {
 	}
 
 	return nil
+}
+
+func (s *server) FindNodes(req *pb.FilterReq, stream pb.Graph_FindNodesServer) error {
+	panic("Not implemented")
 }

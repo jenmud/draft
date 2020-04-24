@@ -9,22 +9,12 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func convertGraphPropsToServiceProps(props map[string]graph.Value) map[string]*pb.Value {
-	p := make(map[string]*pb.Value)
-
-	for k, v := range props {
-		p[k] = &pb.Value{Type: v.Type, Value: v.Value}
-	}
-
-	return p
-}
-
-func convertServicePropsToGraphKVs(props map[string]*pb.Value) []graph.KV {
+func convertServicePropsToGraphKVs(props map[string][]byte) []graph.KV {
 	kvs := make([]graph.KV, len(props))
 
 	count := 0
 	for k, v := range props {
-		kv := graph.KV{Key: k, Value: graph.Value{Type: v.Type, Value: v.Value}}
+		kv := graph.KV{Key: k, Value: v}
 		kvs[count] = kv
 		count++
 	}
@@ -82,7 +72,7 @@ func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error
 		resp := &pb.NodeResp{
 			Uid:        node.UID,
 			Label:      node.Label,
-			Properties: convertGraphPropsToServiceProps(node.Properties),
+			Properties: node.Properties,
 			InEdges:    node.InEdges(),
 			OutEdges:   node.OutEdges(),
 		}
@@ -98,7 +88,7 @@ func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error
 			SourceUid:  edge.SourceUID,
 			Label:      edge.Label,
 			TargetUid:  edge.TargetUID,
-			Properties: convertGraphPropsToServiceProps(edge.Properties),
+			Properties: edge.Properties,
 		}
 		dump.Edges[ecount] = resp
 		ecount++

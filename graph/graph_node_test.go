@@ -8,23 +8,23 @@ import (
 
 func TestAddNode(t *testing.T) {
 	g := New()
-	expected := NewNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	actual, err := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	expected := NewNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
+	actual, err := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
 	assert.Nil(t, err)
 	assert.Equal(t, expected, actual)
 }
 
 func TestAddNode_Duplicate(t *testing.T) {
 	g := New()
-	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	actual, err := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
+	actual, err := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
 	assert.NotNil(t, err)
 	assert.Equal(t, Node{}, actual)
 }
 
 func TestRemoveNode(t *testing.T) {
 	g := New()
-	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
 	err := g.RemoveNode("abcd-1234")
 	assert.Nil(t, err)
 	assert.Equal(t, false, g.HasNode("abcd-1234"))
@@ -71,19 +71,19 @@ func TestRemoveNode_after_edge_removal(t *testing.T) {
 
 func TestHasNode(t *testing.T) {
 	g := New()
-	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
 	assert.Equal(t, true, g.HasNode("abcd-1234"))
 }
 
 func TestHasNode_not_found(t *testing.T) {
 	g := New()
-	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
 	assert.Equal(t, false, g.HasNode("missing"))
 }
 
 func TestNode(t *testing.T) {
 	g := New()
-	expected, _ := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	expected, _ := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
 	actual, err := g.Node("abcd-1234")
 	assert.Nil(t, err)
 	assert.Equal(t, expected, actual)
@@ -91,7 +91,7 @@ func TestNode(t *testing.T) {
 
 func TestNode_not_found(t *testing.T) {
 	g := New()
-	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
+	g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
 	actual, err := g.Node("abcd-1234-missing")
 	assert.NotNil(t, err)
 	assert.Equal(t, Node{}, actual)
@@ -99,8 +99,8 @@ func TestNode_not_found(t *testing.T) {
 
 func TestNodes(t *testing.T) {
 	g := New()
-	expected1, _ := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	expected2, _ := g.AddNode("abcd-4321", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("bar")}})
+	expected1, _ := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
+	expected2, _ := g.AddNode("abcd-4321", "person", KV{Key: "name", Value: []byte("bar")})
 
 	expected := []Node{expected1, expected2}
 	actual := []Node{}
@@ -116,8 +116,8 @@ func TestNodes(t *testing.T) {
 func TestUpdateNode(t *testing.T) {
 	g := New()
 
-	old, err := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: Value{Type: "string", Value: []byte("foo")}})
-	old.Properties["name"] = Value{Type: "string", Value: []byte("bar")}
+	old, err := g.AddNode("abcd-1234", "person", KV{Key: "name", Value: []byte("foo")})
+	old.Properties["name"] = []byte("bar")
 
 	updated, err := g.UpdateNode(old)
 	node, _ := g.Node(old.UID)
@@ -131,7 +131,7 @@ func TestUpdateNode_missing_node(t *testing.T) {
 
 	n1, _ := g.AddNode("node-1", "person")
 	g.RemoveNode(n1.UID)
-	n1.Properties["surname"] = Value{Type: "string", Value: []byte("Blah")}
+	n1.Properties["surname"] = []byte("Blah")
 
 	updated, err := g.UpdateNode(n1)
 	assert.NotNil(t, err)

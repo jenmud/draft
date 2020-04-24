@@ -12,15 +12,7 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, er
 
 	count := 0
 	for k, v := range req.Properties {
-		kv := graph.KV{
-			Key: k,
-			Value: graph.Value{
-				Type:  v.Type,
-				Value: v.Value,
-			},
-		}
-
-		kvs[count] = kv
+		kvs[count] = graph.KV{Key: k, Value: v}
 		count++
 	}
 
@@ -34,7 +26,7 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, er
 		SourceUid:  edge.SourceUID,
 		Label:      edge.Label,
 		TargetUid:  edge.TargetUID,
-		Properties: convertGraphPropsToServiceProps(edge.Properties),
+		Properties: edge.Properties,
 	}
 
 	return &resp, nil
@@ -57,14 +49,14 @@ func (s *server) Edge(ctx context.Context, req *pb.UIDReq) (*pb.EdgeResp, error)
 		return nil, err
 	}
 
-	return &pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: convertGraphPropsToServiceProps(edge.Properties)}, nil
+	return &pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: edge.Properties}, nil
 }
 
 func (s *server) Edges(req *pb.EdgesReq, stream pb.Graph_EdgesServer) error {
 	iter := s.graph.Edges()
 	for iter.Next() {
 		edge := iter.Value().(graph.Edge)
-		resp := pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: convertGraphPropsToServiceProps(edge.Properties)}
+		resp := pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: edge.Properties}
 		if err := stream.Send(&resp); err != nil {
 			return nil
 		}

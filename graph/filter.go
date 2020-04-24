@@ -19,6 +19,8 @@ const (
 type Filter struct {
 	// Type is the filter typle, example label, properties
 	Type FilterType
+	// Key is the property key to filter for if filtering for properties.
+	Key string
 	// Value is the filter criterial to match.
-	Value Value
+	Value []byte
 }
