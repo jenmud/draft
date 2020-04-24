@@ -29,55 +29,6 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// FilterType is the filter type to be applied when filtering/Finding/Searching
-type FilterType int32
-
-const (
-	// label based filtering
-	FilterType_LABEL FilterType = 0
-	// property based filtering
-	FilterType_PROPERTY FilterType = 1
-)
-
-// Enum value maps for FilterType.
-var (
-	FilterType_name = map[int32]string{
-		0: "LABEL",
-		1: "PROPERTY",
-	}
-	FilterType_value = map[string]int32{
-		"LABEL":    0,
-		"PROPERTY": 1,
-	}
-)
-
-func (x FilterType) Enum() *FilterType {
-	p := new(FilterType)
-	*p = x
-	return p
-}
-
-func (x FilterType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (FilterType) Descriptor() protoreflect.EnumDescriptor {
-	return file_service_proto_enumTypes[0].Descriptor()
-}
-
-func (FilterType) Type() protoreflect.EnumType {
-	return &file_service_proto_enumTypes[0]
-}
-
-func (x FilterType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use FilterType.Descriptor instead.
-func (FilterType) EnumDescriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{0}
-}
-
 // UIDReq is a request used for searching the graph for a node/edge
 // which contains the uid.
 type UIDReq struct {
@@ -820,121 +771,6 @@ func (x *StatsResp) GetTotalMemoryAlloc() int32 {
 	return 0
 }
 
-// Filter is a rule for filtering when doing a search.
-type Filter struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	// type of filter to be applied, eg: label, property
-	Type FilterType `protobuf:"varint,1,opt,name=type,proto3,enum=FilterType" json:"type,omitempty"`
-	// key used when doing property filtering
-	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	// value to filter for eg: Value{Type: "string", Value:"name"}
-	Value []byte `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
-}
-
-func (x *Filter) Reset() {
-	*x = Filter{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[12]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Filter) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Filter) ProtoMessage() {}
-
-func (x *Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[12]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Filter.ProtoReflect.Descriptor instead.
-func (*Filter) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *Filter) GetType() FilterType {
-	if x != nil {
-		return x.Type
-	}
-	return FilterType_LABEL
-}
-
-func (x *Filter) GetKey() string {
-	if x != nil {
-		return x.Key
-	}
-	return ""
-}
-
-func (x *Filter) GetValue() []byte {
-	if x != nil {
-		return x.Value
-	}
-	return nil
-}
-
-// FilterReq used for searching
-type FilterReq struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Filter []*Filter `protobuf:"bytes,1,rep,name=filter,proto3" json:"filter,omitempty"`
-}
-
-func (x *FilterReq) Reset() {
-	*x = FilterReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[13]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *FilterReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*FilterReq) ProtoMessage() {}
-
-func (x *FilterReq) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[13]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use FilterReq.ProtoReflect.Descriptor instead.
-func (*FilterReq) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *FilterReq) GetFilter() []*Filter {
-	if x != nil {
-		return x.Filter
-	}
-	return nil
-}
-
 var File_service_proto protoreflect.FileDescriptor
 
 var file_service_proto_rawDesc = []byte{
@@ -1025,41 +861,28 @@ var file_service_proto_rawDesc = []byte{
 	0x6e, 0x74, 0x12, 0x2c, 0x0a, 0x12, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x5f, 0x6d, 0x65, 0x6d, 0x6f,
 	0x72, 0x79, 0x5f, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x18, 0x06, 0x20, 0x01, 0x28, 0x05, 0x52, 0x10,
 	0x74, 0x6f, 0x74, 0x61, 0x6c, 0x4d, 0x65, 0x6d, 0x6f, 0x72, 0x79, 0x41, 0x6c, 0x6c, 0x6f, 0x63,
-	0x22, 0x51, 0x0a, 0x06, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x12, 0x1f, 0x0a, 0x04, 0x74, 0x79,
-	0x70, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x0b, 0x2e, 0x46, 0x69, 0x6c, 0x74, 0x65,
-	0x72, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6b,
-	0x65, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61,
-	0x6c, 0x75, 0x65, 0x22, 0x2c, 0x0a, 0x09, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71,
-	0x12, 0x1f, 0x0a, 0x06, 0x66, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x07, 0x2e, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52, 0x06, 0x66, 0x69, 0x6c, 0x74, 0x65,
-	0x72, 0x2a, 0x25, 0x0a, 0x0a, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x54, 0x79, 0x70, 0x65, 0x12,
-	0x09, 0x0a, 0x05, 0x4c, 0x41, 0x42, 0x45, 0x4c, 0x10, 0x00, 0x12, 0x0c, 0x0a, 0x08, 0x50, 0x52,
-	0x4f, 0x50, 0x45, 0x52, 0x54, 0x59, 0x10, 0x01, 0x32, 0xec, 0x02, 0x0a, 0x05, 0x47, 0x72, 0x61,
-	0x70, 0x68, 0x12, 0x1e, 0x0a, 0x07, 0x41, 0x64, 0x64, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x08, 0x2e,
-	0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x12, 0x22, 0x0a, 0x0a, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x4e, 0x6f, 0x64, 0x65,
-	0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71, 0x1a, 0x0b, 0x2e, 0x52, 0x65, 0x6d, 0x6f,
-	0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1a, 0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x07,
-	0x2e, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05, 0x4e, 0x6f, 0x64, 0x65, 0x73, 0x12, 0x09, 0x2e, 0x4e, 0x6f,
-	0x64, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73,
-	0x70, 0x30, 0x01, 0x12, 0x24, 0x0a, 0x09, 0x46, 0x69, 0x6e, 0x64, 0x4e, 0x6f, 0x64, 0x65, 0x73,
-	0x12, 0x0a, 0x2e, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x4e,
-	0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1e, 0x0a, 0x07, 0x41, 0x64, 0x64,
-	0x45, 0x64, 0x67, 0x65, 0x12, 0x08, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x71, 0x1a, 0x09,
-	0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x22, 0x0a, 0x0a, 0x52, 0x65, 0x6d,
-	0x6f, 0x76, 0x65, 0x45, 0x64, 0x67, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71,
-	0x1a, 0x0b, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1a, 0x0a,
-	0x04, 0x45, 0x64, 0x67, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71, 0x1a, 0x09,
-	0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05, 0x45, 0x64, 0x67,
-	0x65, 0x73, 0x12, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e,
-	0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1e, 0x0a, 0x05, 0x53, 0x74,
-	0x61, 0x74, 0x73, 0x12, 0x09, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x0a,
-	0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1b, 0x0a, 0x04, 0x44, 0x75,
-	0x6d, 0x70, 0x12, 0x08, 0x2e, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x71, 0x1a, 0x09, 0x2e, 0x44,
-	0x75, 0x6d, 0x70, 0x52, 0x65, 0x73, 0x70, 0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x3b, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x32, 0xc6, 0x02, 0x0a, 0x05, 0x47, 0x72, 0x61, 0x70, 0x68, 0x12, 0x1e, 0x0a, 0x07, 0x41, 0x64,
+	0x64, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x08, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x71, 0x1a,
+	0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x22, 0x0a, 0x0a, 0x52, 0x65,
+	0x6d, 0x6f, 0x76, 0x65, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65,
+	0x71, 0x1a, 0x0b, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1a,
+	0x0a, 0x04, 0x4e, 0x6f, 0x64, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71, 0x1a,
+	0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05, 0x4e, 0x6f,
+	0x64, 0x65, 0x73, 0x12, 0x09, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a, 0x09,
+	0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1e, 0x0a, 0x07, 0x41,
+	0x64, 0x64, 0x45, 0x64, 0x67, 0x65, 0x12, 0x08, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x71,
+	0x1a, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x22, 0x0a, 0x0a, 0x52,
+	0x65, 0x6d, 0x6f, 0x76, 0x65, 0x45, 0x64, 0x67, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52,
+	0x65, 0x71, 0x1a, 0x0b, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12,
+	0x1a, 0x0a, 0x04, 0x45, 0x64, 0x67, 0x65, 0x12, 0x07, 0x2e, 0x55, 0x49, 0x44, 0x52, 0x65, 0x71,
+	0x1a, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1f, 0x0a, 0x05, 0x45,
+	0x64, 0x67, 0x65, 0x73, 0x12, 0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x1a,
+	0x09, 0x2e, 0x45, 0x64, 0x67, 0x65, 0x52, 0x65, 0x73, 0x70, 0x30, 0x01, 0x12, 0x1e, 0x0a, 0x05,
+	0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x09, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x71,
+	0x1a, 0x0a, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x12, 0x1b, 0x0a, 0x04,
+	0x44, 0x75, 0x6d, 0x70, 0x12, 0x08, 0x2e, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x71, 0x1a, 0x09,
+	0x2e, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x73, 0x70, 0x42, 0x0b, 0x5a, 0x09, 0x2e, 0x3b, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1074,65 +897,57 @@ func file_service_proto_rawDescGZIP() []byte {
 	return file_service_proto_rawDescData
 }
 
-var file_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_service_proto_goTypes = []interface{}{
-	(FilterType)(0),    // 0: FilterType
-	(*UIDReq)(nil),     // 1: UIDReq
-	(*NodeReq)(nil),    // 2: NodeReq
-	(*NodeResp)(nil),   // 3: NodeResp
-	(*EdgeReq)(nil),    // 4: EdgeReq
-	(*EdgeResp)(nil),   // 5: EdgeResp
-	(*RemoveResp)(nil), // 6: RemoveResp
-	(*NodesReq)(nil),   // 7: NodesReq
-	(*EdgesReq)(nil),   // 8: EdgesReq
-	(*DumpReq)(nil),    // 9: DumpReq
-	(*DumpResp)(nil),   // 10: DumpResp
-	(*StatsReq)(nil),   // 11: StatsReq
-	(*StatsResp)(nil),  // 12: StatsResp
-	(*Filter)(nil),     // 13: Filter
-	(*FilterReq)(nil),  // 14: FilterReq
-	nil,                // 15: NodeReq.PropertiesEntry
-	nil,                // 16: NodeResp.PropertiesEntry
-	nil,                // 17: EdgeReq.PropertiesEntry
-	nil,                // 18: EdgeResp.PropertiesEntry
+	(*UIDReq)(nil),     // 0: UIDReq
+	(*NodeReq)(nil),    // 1: NodeReq
+	(*NodeResp)(nil),   // 2: NodeResp
+	(*EdgeReq)(nil),    // 3: EdgeReq
+	(*EdgeResp)(nil),   // 4: EdgeResp
+	(*RemoveResp)(nil), // 5: RemoveResp
+	(*NodesReq)(nil),   // 6: NodesReq
+	(*EdgesReq)(nil),   // 7: EdgesReq
+	(*DumpReq)(nil),    // 8: DumpReq
+	(*DumpResp)(nil),   // 9: DumpResp
+	(*StatsReq)(nil),   // 10: StatsReq
+	(*StatsResp)(nil),  // 11: StatsResp
+	nil,                // 12: NodeReq.PropertiesEntry
+	nil,                // 13: NodeResp.PropertiesEntry
+	nil,                // 14: EdgeReq.PropertiesEntry
+	nil,                // 15: EdgeResp.PropertiesEntry
 }
 var file_service_proto_depIdxs = []int32{
-	15, // 0: NodeReq.properties:type_name -> NodeReq.PropertiesEntry
-	16, // 1: NodeResp.properties:type_name -> NodeResp.PropertiesEntry
-	17, // 2: EdgeReq.properties:type_name -> EdgeReq.PropertiesEntry
-	18, // 3: EdgeResp.properties:type_name -> EdgeResp.PropertiesEntry
-	3,  // 4: DumpResp.nodes:type_name -> NodeResp
-	5,  // 5: DumpResp.edges:type_name -> EdgeResp
-	0,  // 6: Filter.type:type_name -> FilterType
-	13, // 7: FilterReq.filter:type_name -> Filter
-	2,  // 8: Graph.AddNode:input_type -> NodeReq
-	1,  // 9: Graph.RemoveNode:input_type -> UIDReq
-	1,  // 10: Graph.Node:input_type -> UIDReq
-	7,  // 11: Graph.Nodes:input_type -> NodesReq
-	14, // 12: Graph.FindNodes:input_type -> FilterReq
-	4,  // 13: Graph.AddEdge:input_type -> EdgeReq
-	1,  // 14: Graph.RemoveEdge:input_type -> UIDReq
-	1,  // 15: Graph.Edge:input_type -> UIDReq
-	8,  // 16: Graph.Edges:input_type -> EdgesReq
-	11, // 17: Graph.Stats:input_type -> StatsReq
-	9,  // 18: Graph.Dump:input_type -> DumpReq
-	3,  // 19: Graph.AddNode:output_type -> NodeResp
-	6,  // 20: Graph.RemoveNode:output_type -> RemoveResp
-	3,  // 21: Graph.Node:output_type -> NodeResp
-	3,  // 22: Graph.Nodes:output_type -> NodeResp
-	3,  // 23: Graph.FindNodes:output_type -> NodeResp
-	5,  // 24: Graph.AddEdge:output_type -> EdgeResp
-	6,  // 25: Graph.RemoveEdge:output_type -> RemoveResp
-	5,  // 26: Graph.Edge:output_type -> EdgeResp
-	5,  // 27: Graph.Edges:output_type -> EdgeResp
-	12, // 28: Graph.Stats:output_type -> StatsResp
-	10, // 29: Graph.Dump:output_type -> DumpResp
-	19, // [19:30] is the sub-list for method output_type
-	8,  // [8:19] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	12, // 0: NodeReq.properties:type_name -> NodeReq.PropertiesEntry
+	13, // 1: NodeResp.properties:type_name -> NodeResp.PropertiesEntry
+	14, // 2: EdgeReq.properties:type_name -> EdgeReq.PropertiesEntry
+	15, // 3: EdgeResp.properties:type_name -> EdgeResp.PropertiesEntry
+	2,  // 4: DumpResp.nodes:type_name -> NodeResp
+	4,  // 5: DumpResp.edges:type_name -> EdgeResp
+	1,  // 6: Graph.AddNode:input_type -> NodeReq
+	0,  // 7: Graph.RemoveNode:input_type -> UIDReq
+	0,  // 8: Graph.Node:input_type -> UIDReq
+	6,  // 9: Graph.Nodes:input_type -> NodesReq
+	3,  // 10: Graph.AddEdge:input_type -> EdgeReq
+	0,  // 11: Graph.RemoveEdge:input_type -> UIDReq
+	0,  // 12: Graph.Edge:input_type -> UIDReq
+	7,  // 13: Graph.Edges:input_type -> EdgesReq
+	10, // 14: Graph.Stats:input_type -> StatsReq
+	8,  // 15: Graph.Dump:input_type -> DumpReq
+	2,  // 16: Graph.AddNode:output_type -> NodeResp
+	5,  // 17: Graph.RemoveNode:output_type -> RemoveResp
+	2,  // 18: Graph.Node:output_type -> NodeResp
+	2,  // 19: Graph.Nodes:output_type -> NodeResp
+	4,  // 20: Graph.AddEdge:output_type -> EdgeResp
+	5,  // 21: Graph.RemoveEdge:output_type -> RemoveResp
+	4,  // 22: Graph.Edge:output_type -> EdgeResp
+	4,  // 23: Graph.Edges:output_type -> EdgeResp
+	11, // 24: Graph.Stats:output_type -> StatsResp
+	9,  // 25: Graph.Dump:output_type -> DumpResp
+	16, // [16:26] is the sub-list for method output_type
+	6,  // [6:16] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_service_proto_init() }
@@ -1285,44 +1100,19 @@ func file_service_proto_init() {
 				return nil
 			}
 		}
-		file_service_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Filter); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_service_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FilterReq); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_service_proto_rawDesc,
-			NumEnums:      1,
-			NumMessages:   18,
+			NumEnums:      0,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_service_proto_goTypes,
 		DependencyIndexes: file_service_proto_depIdxs,
-		EnumInfos:         file_service_proto_enumTypes,
 		MessageInfos:      file_service_proto_msgTypes,
 	}.Build()
 	File_service_proto = out.File
@@ -1351,8 +1141,6 @@ type GraphClient interface {
 	Node(ctx context.Context, in *UIDReq, opts ...grpc.CallOption) (*NodeResp, error)
 	// Nodes returns all the node in the graph.
 	Nodes(ctx context.Context, in *NodesReq, opts ...grpc.CallOption) (Graph_NodesClient, error)
-	// FindNode filter for node matching the filters.
-	FindNodes(ctx context.Context, in *FilterReq, opts ...grpc.CallOption) (Graph_FindNodesClient, error)
 	// AddEdge adds a edge to the graph.
 	AddEdge(ctx context.Context, in *EdgeReq, opts ...grpc.CallOption) (*EdgeResp, error)
 	// RemoveEdge remove a edge from the graph.
@@ -1434,38 +1222,6 @@ func (x *graphNodesClient) Recv() (*NodeResp, error) {
 	return m, nil
 }
 
-func (c *graphClient) FindNodes(ctx context.Context, in *FilterReq, opts ...grpc.CallOption) (Graph_FindNodesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Graph_serviceDesc.Streams[1], "/Graph/FindNodes", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &graphFindNodesClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Graph_FindNodesClient interface {
-	Recv() (*NodeResp, error)
-	grpc.ClientStream
-}
-
-type graphFindNodesClient struct {
-	grpc.ClientStream
-}
-
-func (x *graphFindNodesClient) Recv() (*NodeResp, error) {
-	m := new(NodeResp)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 func (c *graphClient) AddEdge(ctx context.Context, in *EdgeReq, opts ...grpc.CallOption) (*EdgeResp, error) {
 	out := new(EdgeResp)
 	err := c.cc.Invoke(ctx, "/Graph/AddEdge", in, out, opts...)
@@ -1494,7 +1250,7 @@ func (c *graphClient) Edge(ctx context.Context, in *UIDReq, opts ...grpc.CallOpt
 }
 
 func (c *graphClient) Edges(ctx context.Context, in *EdgesReq, opts ...grpc.CallOption) (Graph_EdgesClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Graph_serviceDesc.Streams[2], "/Graph/Edges", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Graph_serviceDesc.Streams[1], "/Graph/Edges", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1553,8 +1309,6 @@ type GraphServer interface {
 	Node(context.Context, *UIDReq) (*NodeResp, error)
 	// Nodes returns all the node in the graph.
 	Nodes(*NodesReq, Graph_NodesServer) error
-	// FindNode filter for node matching the filters.
-	FindNodes(*FilterReq, Graph_FindNodesServer) error
 	// AddEdge adds a edge to the graph.
 	AddEdge(context.Context, *EdgeReq) (*EdgeResp, error)
 	// RemoveEdge remove a edge from the graph.
@@ -1584,9 +1338,6 @@ func (*UnimplementedGraphServer) Node(context.Context, *UIDReq) (*NodeResp, erro
 }
 func (*UnimplementedGraphServer) Nodes(*NodesReq, Graph_NodesServer) error {
 	return status.Errorf(codes.Unimplemented, "method Nodes not implemented")
-}
-func (*UnimplementedGraphServer) FindNodes(*FilterReq, Graph_FindNodesServer) error {
-	return status.Errorf(codes.Unimplemented, "method FindNodes not implemented")
 }
 func (*UnimplementedGraphServer) AddEdge(context.Context, *EdgeReq) (*EdgeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddEdge not implemented")
@@ -1683,27 +1434,6 @@ type graphNodesServer struct {
 }
 
 func (x *graphNodesServer) Send(m *NodeResp) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func _Graph_FindNodes_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(FilterReq)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(GraphServer).FindNodes(m, &graphFindNodesServer{stream})
-}
-
-type Graph_FindNodesServer interface {
-	Send(*NodeResp) error
-	grpc.ServerStream
-}
-
-type graphFindNodesServer struct {
-	grpc.ServerStream
-}
-
-func (x *graphFindNodesServer) Send(m *NodeResp) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -1859,11 +1589,6 @@ var _Graph_serviceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Nodes",
 			Handler:       _Graph_Nodes_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "FindNodes",
-			Handler:       _Graph_FindNodes_Handler,
 			ServerStreams: true,
 		},
 		{

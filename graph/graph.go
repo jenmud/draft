@@ -8,8 +8,6 @@ import (
 	"runtime"
 	"sync"
 	"time"
-
-	"github.com/jenmud/draft/graph/iterator"
 )
 
 const (
@@ -61,24 +59,6 @@ func (g *Graph) Stats() Stat {
 	runtime.ReadMemStats(&s.MemStats)
 
 	return s
-}
-
-// Find takes one or more filters and returns nodes/edges which match the
-// filter criteria using a MapReduce strategy.
-func (g *Graph) Find(itemType ItemType, kv KV) Iterator {
-	nodes := g.Nodes()
-	in := make(chan Node, nodes.Size())
-	filtered := make(chan Node, nodes.Size())
-
-	go mapperNode(nodes, in)
-	go reducerNode(in, filtered, LABEL, kv)
-
-	items := []interface{}{}
-	for f := range filtered {
-		items = append(items, f)
-	}
-
-	return iterator.New(items)
 }
 
 // SubGraph takes a starting node UID and returns a new subgraph

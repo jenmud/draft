@@ -20,27 +20,6 @@ func readTestData(t *testing.T, name string) []byte {
 	return data
 }
 
-func TestFind__by_label(t *testing.T) {
-	g := New()
-
-	n1, _ := g.AddNode("node-1", "person")
-	n2, _ := g.AddNode("node-2", "person")
-	g.AddNode("node-3", "animal")
-	g.AddNode("node-4", "pet")
-
-	iter := g.Find(NODE, KV{Key: "person"})
-
-	expected := []Node{n1, n2}
-	actual := make([]Node, iter.Size())
-	count := 0
-	for iter.Next() {
-		actual[count] = iter.Value().(Node)
-		count++
-	}
-
-	assert.ElementsMatch(t, expected, actual)
-}
-
 func TestSubGraph_one_level(t *testing.T) {
 	reader := bytes.NewReader(readTestData(t, "simple-graph.json"))
 	g, err := NewFromJSON(reader)

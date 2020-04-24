@@ -80,7 +80,3 @@ func (s *server) Nodes(req *pb.NodesReq, stream pb.Graph_NodesServer) error {
 
 	return nil
 }
-
-func (s *server) FindNodes(req *pb.FilterReq, stream pb.Graph_FindNodesServer) error {
-	panic("Not implemented")
-}

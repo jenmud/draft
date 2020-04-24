@@ -89,29 +89,6 @@ message StatsResp {
     int32 total_memory_alloc = 6;
 }
 
-// FilterType is the filter type to be applied when filtering/Finding/Searching
-enum FilterType {
-    // label based filtering
-    LABEL = 0;
-    // property based filtering
-    PROPERTY = 1;
-}
-
-// Filter is a rule for filtering when doing a search.
-message Filter {
-    // type of filter to be applied, eg: label, property
-    FilterType type = 1;
-    // key used when doing property filtering
-    string key = 2;
-    // value to filter for eg: Value{Type: "string", Value:"name"}
-    bytes value = 3;
-}
-
-// FilterReq used for searching
-message FilterReq {
-    repeated Filter filter = 1;
-}
-
 
 // Graph is the graph service.
 service Graph {
@@ -123,8 +100,6 @@ service Graph {
     rpc Node (UIDReq) returns (NodeResp);
     // Nodes returns all the node in the graph.
     rpc Nodes (NodesReq) returns (stream NodeResp);
-    // FindNode filter for node matching the filters.
-    rpc FindNodes(FilterReq) returns (stream NodeResp);
 
     // AddEdge adds a edge to the graph.
     rpc AddEdge (EdgeReq) returns (EdgeResp);
