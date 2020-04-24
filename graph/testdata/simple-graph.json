@@ -4,30 +4,21 @@
             "uid": "node-foo",
             "label": "person",
             "properties": {
-                "name": {
-                    "type": "string",
-                    "value": "Zm9v"
-                }
+                "name": "Zm9v"
             }
         },
         {
             "uid": "node-bar",
             "label": "person",
             "properties": {
-                "name": {
-                    "type": "string",
-                    "value": "YmFy"
-                }
+                "name": "YmFy"
             }
         },
         {
             "uid": "node-dog",
             "label": "animal",
             "properties": {
-                "name": {
-                    "type": "string",
-                    "value": "c29ja3M="
-                }
+                "name": "c29ja3M="
             }
         }
     ],
@@ -52,10 +43,7 @@
             "label": "knows",
             "target_uid": "node-bar",
             "properties": {
-                "name": {
-                    "type": "int",
-                    "value": "MjAyMA=="
-                }
+                "name": "MjAyMA=="
             }
         },
         {

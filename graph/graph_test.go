@@ -101,11 +101,11 @@ func TestSubGraph_one_level(t *testing.T) {
 
 	e1, err := subg.Edge("edge-dislike")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog"}, e1)
+	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog", Properties: map[string][]byte{}}, e1)
 
 	e2, err := subg.Edge("edge-owns")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog"}, e2)
+	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog", Properties: map[string][]byte{}}, e2)
 }
 
 func TestMarshalJSON(t *testing.T) {
@@ -200,17 +200,17 @@ func TestUnmarshalJSON(t *testing.T) {
 
 	e1, err := g.Edge("edge-like")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-like", SourceUID: "node-foo", Label: "likes", TargetUID: "node-bar"}, e1)
+	assert.Equal(t, Edge{UID: "edge-like", SourceUID: "node-foo", Label: "likes", TargetUID: "node-bar", Properties: map[string][]byte{}}, e1)
 
 	e2, err := g.Edge("edge-dislike")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog"}, e2)
+	assert.Equal(t, Edge{UID: "edge-dislike", SourceUID: "node-bar", Label: "dislikes", TargetUID: "node-dog", Properties: map[string][]byte{}}, e2)
 
 	e3, err := g.Edge("edge-knows")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-knows", SourceUID: "node-foo", Label: "knows", TargetUID: "node-bar", Properties: map[string][]byte{"since": []byte("2020")}}, e3)
+	assert.Equal(t, Edge{UID: "edge-knows", SourceUID: "node-foo", Label: "knows", TargetUID: "node-bar", Properties: map[string][]byte{"name": []byte("2020")}}, e3)
 
 	e4, err := g.Edge("edge-owns")
 	assert.Nil(t, err)
-	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog"}, e4)
+	assert.Equal(t, Edge{UID: "edge-owns", SourceUID: "node-foo", Label: "owns", TargetUID: "node-dog", Properties: map[string][]byte{}}, e4)
 }
