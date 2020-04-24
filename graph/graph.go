@@ -71,7 +71,7 @@ func (g *Graph) Find(itemType ItemType, kv KV) Iterator {
 	filtered := make(chan Node, nodes.Size())
 
 	go mapperNode(nodes, in)
-	go reducerNode(LABEL, kv, in, filtered)
+	go reducerNode(in, filtered, LABEL, kv)
 
 	items := []interface{}{}
 	for f := range filtered {

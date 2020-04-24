@@ -23,7 +23,7 @@ func mapperNode(iter Iterator, out chan<- Node) {
 }
 
 // reducer is the filter.
-func reducerNode(filter FilterType, kv KV, in chan Node, out chan Node) {
+func reducerNode(in chan Node, out chan Node, filter FilterType, kv KV) {
 	for node := range in {
 		switch filter {
 		case LABEL:
