@@ -70,7 +70,7 @@ NodePattern <- '(' _ labels:NodeLabels? _ ')' {
     return plan, nil
 }
 
-NodeLabels <- label:NodeLabel _ labels:(NodeLabel)* {
+NodeLabels <- label:NodeLabel _ labels:(NodeLabel)* _ props:(Properties)* {
     l := make([]string, 1 + len(labels.([]interface{})))
     l[0] = label.(string)
 
@@ -85,8 +85,33 @@ NodeLabel <- ':' _ label:String {
     return label, nil
 }
 
+Properties <- MapLiteral
+
+MapLiteral <- '{' _ key:String _ ':' _ value:(StringLiteral/Integer) '}' {
+    props := make(map[string][]byte)
+
+    switch value.(type) {
+    case string:
+        props[key.(string)] = []byte(value.(string))
+    case int64:
+        props[key.(string)] = []byte(fmt.Sprintf("%d", value.(int64)))
+    }
+
+    log.Printf("%v -> %s", props, props["name"])
+    return props, nil
+}
+
+StringLiteral <- s:("'" _ String _ "'" / '"' _ String _ '"' ) {
+    ss := s.([]interface{})
+    return ss[2].(string), nil
+}
+
 String <- [a-zA-Z0-9]+ {
     return string(c.text), nil
+}
+
+Integer <- [0-9]+ {
+    return strconv.ParseInt(string(c.text), 10, 32)
 }
 
 _ "whitespace" ← [ \t\r\n]*
