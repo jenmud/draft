@@ -7,6 +7,11 @@ import (
     "fmt"
 )
 
+type KV struct {
+    Key string
+    Value []byte
+}
+
 type QueryPlan struct {
     ReadingClause []MatchQueryPlan
 }
@@ -17,6 +22,7 @@ type MatchQueryPlan struct {
 
 type NodeQueryPlan struct {
     Lables []string
+    Properties map[string][]byte
 }
 
 func main() {
@@ -60,17 +66,21 @@ AnonymousPatternPart <- PatternElement
 
 PatternElement <- NodePattern
 
-NodePattern <- '(' _ labels:NodeLabels? _ ')' {
+NodePattern <- '(' _ labels:NodeLabels? _ props:(Properties)? _ ')' {
     plan := NodeQueryPlan{}
 
     if labels != nil {
         plan.Lables = labels.([]string)
     }
 
+    if props != nil {
+        plan.Properties = props.(map[string][]byte)
+    }
+
     return plan, nil
 }
 
-NodeLabels <- label:NodeLabel _ labels:(NodeLabel)* _ props:(Properties)* {
+NodeLabels <- label:NodeLabel _ labels:(NodeLabel)*{
     l := make([]string, 1 + len(labels.([]interface{})))
     l[0] = label.(string)
 
@@ -86,18 +96,21 @@ NodeLabel <- ':' _ label:String {
 }
 
 Properties <- MapLiteral
-
-MapLiteral <- '{' _ key:String _ ':' _ value:(StringLiteral/Integer) '}' {
-    props := make(map[string][]byte)
-
+ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer) {
     switch value.(type) {
     case string:
-        props[key.(string)] = []byte(value.(string))
+        return KV{key.(string), []byte(value.(string))}, nil
     case int64:
-        props[key.(string)] = []byte(fmt.Sprintf("%d", value.(int64)))
+        return KV{key.(string), []byte(fmt.Sprintf("%d", value.(int64)))}, nil
+    default:
+        return nil, fmt.Errorf("Don't know what to do with %#v", value)
     }
+}
 
-    log.Printf("%v -> %s", props, props["name"])
+MapLiteral <- '{' _ kv:ProperyKV _ '}' {
+    props := make(map[string][]byte)
+    k := kv.(KV)
+    props[k.Key] = k.Value
     return props, nil
 }
 
