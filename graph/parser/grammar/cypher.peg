@@ -1,0 +1,73 @@
+{
+// Stripped down OpenCypher parser for quering the graph. 
+package main
+
+import (
+    "log"
+    "fmt"
+)
+
+func main() {
+    if len(os.Args) != 2 {
+        log.Fatal("Usage: cypher query 'QUERY'")
+    }
+
+    got, err := ParseReader("", strings.NewReader(os.Args[1]))
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println("=", got)
+}
+}
+
+Statement <- Query EOF
+
+Query <- RegularQuery
+
+RegularQuery <-  SingleQuery
+
+SingleQuery <- ReadingClause
+
+ReadingClause <- Match {
+    log.Printf("ReadingClause: %s", c.text)
+    return nil, nil
+}
+
+Match <- "MATCH" _ Pattern
+
+Pattern <- PatternPart
+
+PatternPart <- AnonymousPatternPart
+
+AnonymousPatternPart <- PatternElement
+
+PatternElement <- NodePattern
+
+NodePattern <- '(' _ labels:NodeLabels? _ ')' {
+    log.Printf("NodePattern: %s -> label: %s", c.text, labels)
+    return nil, nil
+}
+
+NodeLabels <- label:NodeLabel _ labels:(NodeLabel)* {
+    l := make([]string, 1 + len(labels.([]interface{})))
+    l[0] = string(label.([]uint8))
+
+    for i, label := range labels.([]interface{}) {
+        l[i+1] = string(label.([]uint8))
+    }
+
+    return l, nil
+}
+
+NodeLabel <- ':' _ label:String {
+    return label, nil
+}
+
+String <- [a-zA-Z0-9]+ {
+    return c.text, nil
+}
+
+_ "whitespace" ← [ \t\r\n]*
+
+EOF <- !.
