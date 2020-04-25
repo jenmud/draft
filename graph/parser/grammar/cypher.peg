@@ -7,6 +7,18 @@ import (
     "fmt"
 )
 
+type QueryPlan struct {
+    ReadingClause []MatchQueryPlan
+}
+
+type MatchQueryPlan struct {
+    Nodes []NodeQueryPlan
+}
+
+type NodeQueryPlan struct {
+    Lables []string
+}
+
 func main() {
     if len(os.Args) != 2 {
         log.Fatal("Usage: cypher query 'QUERY'")
@@ -27,16 +39,20 @@ Query <- RegularQuery
 
 RegularQuery <-  SingleQuery
 
-SingleQuery <- ReadingClause
+SingleQuery <- ReadingClause _
 
 ReadingClause <- Match {
     log.Printf("ReadingClause: %s", c.text)
     return nil, nil
 }
 
-Match <- "MATCH" _ Pattern
+Match <- M A T C H _ pattern:Pattern {
+    plan := MatchQueryPlan{Nodes: []NodeQueryPlan{pattern.(NodeQueryPlan)}}
+    log.Printf("match pattern: %#v", plan)
+    return plan, nil
+}
 
-Pattern <- PatternPart
+Pattern <- PatternPart 
 
 PatternPart <- AnonymousPatternPart
 
@@ -45,16 +61,21 @@ AnonymousPatternPart <- PatternElement
 PatternElement <- NodePattern
 
 NodePattern <- '(' _ labels:NodeLabels? _ ')' {
-    log.Printf("NodePattern: %s -> label: %s", c.text, labels)
-    return nil, nil
+    plan := NodeQueryPlan{}
+
+    if labels != nil {
+        plan.Lables = labels.([]string)
+    }
+
+    return plan, nil
 }
 
 NodeLabels <- label:NodeLabel _ labels:(NodeLabel)* {
     l := make([]string, 1 + len(labels.([]interface{})))
-    l[0] = string(label.([]uint8))
+    l[0] = label.(string)
 
     for i, label := range labels.([]interface{}) {
-        l[i+1] = string(label.([]uint8))
+        l[i+1] = label.(string)
     }
 
     return l, nil
@@ -65,9 +86,34 @@ NodeLabel <- ':' _ label:String {
 }
 
 String <- [a-zA-Z0-9]+ {
-    return c.text, nil
+    return string(c.text), nil
 }
 
 _ "whitespace" ← [ \t\r\n]*
+
+A <- ('A' / 'a')
+B <- ('B' / 'b')
+C <- ('C' / 'c')
+D <- ('D' / 'd')
+E <- ('E' / 'e')
+F <- ('F' / 'f')
+G <- ('G' / 'g')
+H <- ('H' / 'h')
+I <- ('I' / 'i')
+K <- ('K' / 'k')
+L <- ('L' / 'l')
+M <- ('M' / 'm')
+N <- ('N' / 'n')
+O <- ('O' / 'o')
+P <- ('P' / 'p')
+Q <- ('Q' / 'q')
+R <- ('R' / 'r')
+S <- ('S' / 's')
+T <- ('T' / 't')
+U <- ('U' / 'u')
+V <- ('V' / 'v')
+W <- ('W' / 'w')
+X <- ('X' / 'x')
+Y <- ('Y' / 'y')
 
 EOF <- !.
