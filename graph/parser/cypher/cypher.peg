@@ -1,6 +1,6 @@
 {
 // Stripped down OpenCypher parser for quering the graph. 
-package main
+package cypher
 
 import (
     "log"
@@ -21,8 +21,15 @@ type MatchQueryPlan struct {
 }
 
 type NodeQueryPlan struct {
-    Lables []string
+    Labels []string
     Properties map[string][]byte
+}
+
+func toIfaceSlice(v interface{}) []interface{} {
+    if v == nil {
+        return nil
+    }
+    return v.([]interface{})
 }
 
 func main() {
@@ -39,17 +46,30 @@ func main() {
 }
 }
 
-Statement <- Query EOF
+Statement <- query:Query EOF {
+    log.Printf("Query: %#v", query)
 
-Query <- RegularQuery
+    q := QueryPlan{
+        ReadingClause: []MatchQueryPlan{query.(MatchQueryPlan)},
+    }
 
-RegularQuery <-  SingleQuery
+    return q, nil
+}
 
-SingleQuery <- ReadingClause _
+Query <- regularQuery:RegularQuery {
+    return regularQuery, nil
+}
 
-ReadingClause <- Match {
-    log.Printf("ReadingClause: %s", c.text)
-    return nil, nil
+RegularQuery <-  singleQuery:SingleQuery {
+    return singleQuery, nil
+}
+
+SingleQuery <- clause:ReadingClause _ {
+    return clause, nil
+}
+
+ReadingClause <- match:Match {
+    return match, nil
 }
 
 Match <- M A T C H _ pattern:Pattern {
@@ -70,7 +90,7 @@ NodePattern <- '(' _ labels:NodeLabels? _ props:(Properties)? _ ')' {
     plan := NodeQueryPlan{}
 
     if labels != nil {
-        plan.Lables = labels.([]string)
+        plan.Labels = labels.([]string)
     }
 
     if props != nil {
@@ -96,7 +116,7 @@ NodeLabel <- ':' _ label:String {
 }
 
 Properties <- MapLiteral
-ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer) {
+ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer){
     switch value.(type) {
     case string:
         return KV{key.(string), []byte(value.(string))}, nil
@@ -107,10 +127,25 @@ ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer) {
     }
 }
 
-MapLiteral <- '{' _ kv:ProperyKV _ '}' {
+MapLiteral <- '{' _ kv:(ProperyKV _ (',' _ ProperyKV)* )? _ '}' {
     props := make(map[string][]byte)
-    k := kv.(KV)
-    props[k.Key] = k.Value
+
+    propsList := toIfaceSlice(kv)
+
+    if len(propsList) == 0 {
+        return props, nil
+    }
+
+    first := propsList[0].(KV)
+    props[first.Key] = first.Value
+
+    rest := toIfaceSlice(propsList[2])
+    log.Printf("%v", rest)
+    for _, pkv := range rest {
+        kv := toIfaceSlice(pkv)[2].(KV)
+        props[kv.Key] = kv.Value
+    }
+
     return props, nil
 }
 
