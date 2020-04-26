@@ -148,6 +148,9 @@ MapLiteral <- '{' _ kv:(ProperyKV _ (',' _ ProperyKV)* )? _ '}' {
     rest := toIfaceSlice(propsList[2])
     for _, pkv := range rest {
         kv := toIfaceSlice(pkv)[2].(KV)
+        if _, ok := props[kv.Key]; ok {
+            return nil, fmt.Errorf("Duplicate map key %s not allowed", kv.Key)
+        }
         props[kv.Key] = kv.Value
     }
 

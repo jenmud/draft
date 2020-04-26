@@ -1,15 +1,15 @@
 package cypher
 
 import (
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 type TestCase struct {
-	Query    string
-	Expected QueryPlan
+	Query       string
+	Expected    QueryPlan
+	ShouldError bool
 }
 
 func TestMatchQueries(t *testing.T) {
@@ -98,16 +98,40 @@ func TestMatchQueries(t *testing.T) {
 				},
 			},
 		},
+		TestCase{
+			Query:       `MATCH (n:Person:Animal {name: "Foo", name: "This should fail"})`,
+			ShouldError: true,
+			Expected: QueryPlan{
+				ReadingClause: []MatchQueryPlan{
+					MatchQueryPlan{
+						[]NodeQueryPlan{
+							NodeQueryPlan{
+								Variable: "n",
+								Labels:   []string{"Person", "Animal"},
+								Properties: map[string][]byte{
+									"name":    []byte("Foo"),
+									"surname": []byte("Foo-Bar"),
+									"age":     []byte("21"),
+									"sex":     []byte("Rather not say"),
+									"male":    []byte("true"),
+									"female":  []byte("false"),
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
 		got, err := Parse("", []byte(test.Query))
-		if err != nil {
-			log.Printf("Error: %s", err)
+		if !test.ShouldError {
+			assert.Nil(t, err)
+			actual := got.(QueryPlan)
+			assert.Equal(t, test.Expected, actual)
+		} else {
+			assert.NotNil(t, err, "Expected query %s to fail", test.Query)
 		}
-		assert.Nil(t, err)
-		actual := got.(QueryPlan)
-		assert.Equal(t, test.Expected, actual)
-
 	}
 }
