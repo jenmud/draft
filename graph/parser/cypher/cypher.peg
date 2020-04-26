@@ -113,12 +113,14 @@ NodeLabel <- ':' _ label:String {
 }
 
 Properties <- MapLiteral
-ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer){
+ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer/BoolLiteral){
     switch value.(type) {
     case string:
         return KV{key.(string), []byte(value.(string))}, nil
     case int64:
         return KV{key.(string), []byte(fmt.Sprintf("%d", value.(int64)))}, nil
+    case bool:
+        return KV{key.(string), []byte(fmt.Sprintf("%t", value.(bool)))}, nil
     default:
         return nil, fmt.Errorf("Don't know what to do with %#v", value)
     }
@@ -157,6 +159,8 @@ String <- [a-zA-Z0-9]+ {
 Integer <- [0-9]+ {
     return strconv.ParseInt(string(c.text), 10, 32)
 }
+
+BoolLiteral <- T "rue" { return true, nil } / F "alse" { return false, nil}
 
 _ "whitespace" ← [ \t\r\n]*
 
