@@ -15,32 +15,58 @@ type TestCase struct {
 func TestMatchQueries(t *testing.T) {
 	tests := []TestCase{
 		TestCase{
-			Query: `MATCH (:Person)`,
-			Expected: QueryPlan{
-				ReadingClause: []MatchQueryPlan{
-					MatchQueryPlan{
-						[]NodeQueryPlan{NodeQueryPlan{Labels: []string{"Person"}}},
-					},
-				},
-			},
-		},
-		TestCase{
-			Query: `MATCH (:Person:Animal)`,
-			Expected: QueryPlan{
-				ReadingClause: []MatchQueryPlan{
-					MatchQueryPlan{
-						[]NodeQueryPlan{NodeQueryPlan{Labels: []string{"Person", "Animal"}}},
-					},
-				},
-			},
-		},
-		TestCase{
-			Query: `MATCH (:Person:Animal {})`,
+			Query: `MATCH (n:Person)`,
 			Expected: QueryPlan{
 				ReadingClause: []MatchQueryPlan{
 					MatchQueryPlan{
 						[]NodeQueryPlan{
 							NodeQueryPlan{
+								Variable: "n",
+								Labels:   []string{"Person"},
+							},
+						},
+					},
+				},
+			},
+		},
+		TestCase{
+			Query: `MATCH (node:Person)`,
+			Expected: QueryPlan{
+				ReadingClause: []MatchQueryPlan{
+					MatchQueryPlan{
+						[]NodeQueryPlan{
+							NodeQueryPlan{
+								Variable: "node",
+								Labels:   []string{"Person"},
+							},
+						},
+					},
+				},
+			},
+		},
+		TestCase{
+			Query: `MATCH (n:Person:Animal)`,
+			Expected: QueryPlan{
+				ReadingClause: []MatchQueryPlan{
+					MatchQueryPlan{
+						[]NodeQueryPlan{
+							NodeQueryPlan{
+								Variable: "n",
+								Labels:   []string{"Person", "Animal"},
+							},
+						},
+					},
+				},
+			},
+		},
+		TestCase{
+			Query: `MATCH (n:Person:Animal {})`,
+			Expected: QueryPlan{
+				ReadingClause: []MatchQueryPlan{
+					MatchQueryPlan{
+						[]NodeQueryPlan{
+							NodeQueryPlan{
+								Variable:   "n",
 								Labels:     []string{"Person", "Animal"},
 								Properties: map[string][]byte{},
 							},
@@ -50,13 +76,14 @@ func TestMatchQueries(t *testing.T) {
 			},
 		},
 		TestCase{
-			Query: `MATCH (:Person:Animal {name: "Foo", surname: 'Foo-Bar', age: 21, sex: "Rather not say", male: True, female: false})`,
+			Query: `MATCH (n:Person:Animal {name: "Foo", surname: 'Foo-Bar', age: 21, sex: "Rather not say", male: True, female: false})`,
 			Expected: QueryPlan{
 				ReadingClause: []MatchQueryPlan{
 					MatchQueryPlan{
 						[]NodeQueryPlan{
 							NodeQueryPlan{
-								Labels: []string{"Person", "Animal"},
+								Variable: "n",
+								Labels:   []string{"Person", "Animal"},
 								Properties: map[string][]byte{
 									"name":    []byte("Foo"),
 									"surname": []byte("Foo-Bar"),

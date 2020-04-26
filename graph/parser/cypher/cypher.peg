@@ -21,6 +21,7 @@ type MatchQueryPlan struct {
 }
 
 type NodeQueryPlan struct {
+    Variable string
     Labels []string
     Properties map[string][]byte
 }
@@ -83,8 +84,10 @@ AnonymousPatternPart <- PatternElement
 
 PatternElement <- NodePattern
 
-NodePattern <- '(' _ labels:NodeLabels? _ props:(Properties)? _ ')' {
-    plan := NodeQueryPlan{}
+NodePattern <- '(' variable:Variable _ labels:NodeLabels? _ props:(Properties)? _ ')' {
+    plan := NodeQueryPlan{
+        Variable: variable.(string),
+    }
 
     if labels != nil {
         plan.Labels = labels.([]string)
@@ -111,6 +114,10 @@ NodeLabels <- label:NodeLabel _ labels:(NodeLabel)*{
 NodeLabel <- ':' _ label:String {
     return label, nil
 }
+
+Variable <- SymbolicName
+
+SymbolicName <- String
 
 Properties <- MapLiteral
 ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer/BoolLiteral){
