@@ -127,7 +127,6 @@ ProperyKV <- key:String _ ':' _ value:(StringLiteral/Integer/BoolLiteral){
 }
 
 MapLiteral <- '{' _ kv:(ProperyKV _ (',' _ ProperyKV)* )? _ '}' {
-    log.Printf("%s", c.text)
     props := make(map[string][]byte)
 
     propsList := toIfaceSlice(kv)
@@ -148,9 +147,28 @@ MapLiteral <- '{' _ kv:(ProperyKV _ (',' _ ProperyKV)* )? _ '}' {
     return props, nil
 }
 
-StringLiteral <- s:("'" _ String _ (String _)* "'" / '"' _ String _ (String _)* '"' ) {
-    return string(c.text[1:len(c.text)-1]), nil
+StringLiteral <- ('"' ( !EscapedChar . / '\\' EscapeSequence )* '"' / "'" ( !EscapedChar . / '\\' EscapeSequence )* "'") {
+    c.text = bytes.Replace(c.text, []byte(`\/`), []byte(`/`), -1)
+
+    // deal with single quates
+    if strings.HasPrefix(string(c.text), "'") {
+        c.text = bytes.ReplaceAll(c.text, []byte(`"`), []byte(`'`))
+        c.text = bytes.ReplaceAll(c.text, []byte(`'`), []byte(``))
+        return string(c.text), nil
+    }
+
+    // deal with double quates
+    c.text = bytes.ReplaceAll(c.text, []byte(`'`), []byte(`\'`))
+    return strconv.Unquote(string(c.text))
 }
+
+EscapedChar <- [\x00-\x1f'"\\]
+
+EscapeSequence <- SingleCharEscape / UnicodeEscape
+
+SingleCharEscape <- ['"\\/bfnrt]
+
+UnicodeEscape <- 'u' HexDigit HexDigit HexDigit HexDigit
 
 String <- [a-zA-Z0-9]+ {
     return string(c.text), nil

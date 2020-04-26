@@ -50,7 +50,7 @@ func TestMatchQueries(t *testing.T) {
 			},
 		},
 		TestCase{
-			Query: `MATCH (:Person:Animal {name: "Foo", surname: 'Bar', age: 21, sex: "Rather not say", male: True, female: false})`,
+			Query: `MATCH (:Person:Animal {name: "Foo", surname: 'Foo-Bar', age: 21, sex: "Rather not say", male: True, female: false})`,
 			Expected: QueryPlan{
 				ReadingClause: []MatchQueryPlan{
 					MatchQueryPlan{
@@ -59,7 +59,7 @@ func TestMatchQueries(t *testing.T) {
 								Labels: []string{"Person", "Animal"},
 								Properties: map[string][]byte{
 									"name":    []byte("Foo"),
-									"surname": []byte("Bar"),
+									"surname": []byte("Foo-Bar"),
 									"age":     []byte("21"),
 									"sex":     []byte("Rather not say"),
 									"male":    []byte("true"),
