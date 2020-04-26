@@ -47,8 +47,6 @@ func main() {
 }
 
 Statement <- query:Query EOF {
-    log.Printf("Query: %#v", query)
-
     q := QueryPlan{
         ReadingClause: []MatchQueryPlan{query.(MatchQueryPlan)},
     }
@@ -74,7 +72,6 @@ ReadingClause <- match:Match {
 
 Match <- M A T C H _ pattern:Pattern {
     plan := MatchQueryPlan{Nodes: []NodeQueryPlan{pattern.(NodeQueryPlan)}}
-    log.Printf("match pattern: %#v", plan)
     return plan, nil
 }
 
@@ -140,7 +137,6 @@ MapLiteral <- '{' _ kv:(ProperyKV _ (',' _ ProperyKV)* )? _ '}' {
     props[first.Key] = first.Value
 
     rest := toIfaceSlice(propsList[2])
-    log.Printf("%v", rest)
     for _, pkv := range rest {
         kv := toIfaceSlice(pkv)[2].(KV)
         props[kv.Key] = kv.Value
@@ -149,9 +145,8 @@ MapLiteral <- '{' _ kv:(ProperyKV _ (',' _ ProperyKV)* )? _ '}' {
     return props, nil
 }
 
-StringLiteral <- s:("'" _ String _ "'" / '"' _ String _ '"' ) {
-    ss := s.([]interface{})
-    return ss[2].(string), nil
+StringLiteral <- s:("'" _ String _ String* "'" / '"' _ String _ String*'"' ) {
+    return string(c.text[1:len(c.text)-1]), nil
 }
 
 String <- [a-zA-Z0-9]+ {
