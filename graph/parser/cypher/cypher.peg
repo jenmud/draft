@@ -13,14 +13,19 @@ type KV struct {
 }
 
 type QueryPlan struct {
-    ReadingClause []MatchQueryPlan
+    ReadingClause []ReadingClause
 }
 
-type MatchQueryPlan struct {
-    Nodes []NodeQueryPlan
+type ReadingClause struct {
+    Match MatchQuery
+    Returns []string
 }
 
-type NodeQueryPlan struct {
+type MatchQuery struct {
+    Nodes []NodeQuery
+}
+
+type NodeQuery struct {
     Variable string
     Labels []string
     Properties map[string][]byte
@@ -48,8 +53,9 @@ func main() {
 }
 
 Statement <- query:Query EOF {
+    log.Printf("%s", c.text)
     q := QueryPlan{
-        ReadingClause: []MatchQueryPlan{query.(MatchQueryPlan)},
+        ReadingClause: []ReadingClause{query.(ReadingClause)},
     }
 
     return q, nil
@@ -63,16 +69,26 @@ RegularQuery <-  singleQuery:SingleQuery {
     return singleQuery, nil
 }
 
-SingleQuery <- clause:ReadingClause _ {
-    return clause, nil
+SingleQuery <- clause:ReadingClause _ ret:Return {
+    cl := clause.(ReadingClause)
+    cl.Returns = []string{ret.(string)}
+    return cl, nil
 }
 
 ReadingClause <- match:Match {
-    return match, nil
+    clause := ReadingClause{
+        Match: match.(MatchQuery),
+    }
+
+    return clause, nil
+}
+
+Return <- R E T U R N  _ v:Variable {
+    return v.(string), nil
 }
 
 Match <- M A T C H _ pattern:Pattern {
-    plan := MatchQueryPlan{Nodes: []NodeQueryPlan{pattern.(NodeQueryPlan)}}
+    plan := MatchQuery{Nodes: []NodeQuery{pattern.(NodeQuery)}}
     return plan, nil
 }
 
@@ -85,7 +101,7 @@ AnonymousPatternPart <- PatternElement
 PatternElement <- NodePattern
 
 NodePattern <- '(' variable:Variable _ labels:NodeLabels? _ props:(Properties)? _ ')' {
-    plan := NodeQueryPlan{
+    plan := NodeQuery{
         Variable: variable.(string),
     }
 
