@@ -75,6 +75,25 @@ func TestMatchQueries(t *testing.T) {
 				},
 			},
 		},
+		TestCase{
+			Query:       `MATCH (n:Person:Animal {name: "Foo", name: 'Bar'}) RETURN n`,
+			ShouldError: true,
+			Expected: QueryPlan{
+				ReadingClause: []ReadingClause{
+					ReadingClause{
+						Returns: []string{"n"},
+						Match: MatchQuery{
+							Nodes: []NodeQuery{
+								NodeQuery{
+									Variable: "n",
+									Labels:   []string{"Person", "Animal"},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
