@@ -70,6 +70,10 @@ RegularQuery <-  singleQuery:SingleQuery {
 }
 
 SingleQuery <- clause:ReadingClause _ ret:Return {
+    if ret == nil {
+        return nil, fmt.Errorf("RETURN missing and is required")
+    }
+
     cl := clause.(ReadingClause)
     cl.Returns = []string{ret.(string)}
     return cl, nil
