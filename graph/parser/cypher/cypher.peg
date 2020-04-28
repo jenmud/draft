@@ -1,55 +1,6 @@
 {
 // Stripped down OpenCypher parser for quering the graph. 
 package cypher
-
-import (
-    "log"
-    "fmt"
-)
-
-type KV struct {
-    Key string
-    Value []byte
-}
-
-type QueryPlan struct {
-    ReadingClause []ReadingClause
-}
-
-type ReadingClause struct {
-    Match MatchQuery
-    Returns []string
-}
-
-type MatchQuery struct {
-    Nodes []NodeQuery
-}
-
-type NodeQuery struct {
-    Variable string
-    Labels []string
-    Properties map[string][]byte
-}
-
-func toIfaceSlice(v interface{}) []interface{} {
-    if v == nil {
-        return nil
-    }
-    return v.([]interface{})
-}
-
-func main() {
-    if len(os.Args) != 2 {
-        log.Fatal("Usage: cypher query 'QUERY'")
-    }
-
-    got, err := ParseReader("", strings.NewReader(os.Args[1]))
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    fmt.Println("=", got)
-}
 }
 
 Statement <- query:Query EOF {
@@ -81,7 +32,7 @@ SingleQuery <- clause:ReadingClause _ ret:Return {
 
 ReadingClause <- match:Match {
     clause := ReadingClause{
-        Match: match.(MatchQuery),
+        Match: match.(Match),
     }
 
     return clause, nil
@@ -92,7 +43,7 @@ Return <- R E T U R N  _ v:Variable {
 }
 
 Match <- M A T C H _ pattern:Pattern {
-    plan := MatchQuery{Nodes: []NodeQuery{pattern.(NodeQuery)}}
+    plan := Match{Nodes: []Node{pattern.(Node)}}
     return plan, nil
 }
 
@@ -105,7 +56,7 @@ AnonymousPatternPart <- PatternElement
 PatternElement <- NodePattern
 
 NodePattern <- '(' variable:Variable _ labels:NodeLabels? _ props:(Properties)? _ ')' {
-    plan := NodeQuery{
+    plan := Node{
         Variable: variable.(string),
     }
 

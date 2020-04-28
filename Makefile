@@ -17,4 +17,4 @@ fmt:
 	gofmt -w ./..
 
 test:
-	go test -timeout 30s -i -race -v ./... -cover
+	go test -timeout 30s -race -v ./... -cover

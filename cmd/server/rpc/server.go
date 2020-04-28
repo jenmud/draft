@@ -56,14 +56,10 @@ func (s *server) Save(w io.Writer) error {
 	return err
 }
 
-func (s *server) Query(ctx context.Context, req *pb.QueryReq) (*pb.QueryResp, error) {
-	panic(req.Query)
-}
-
-func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
+func dump(g *graph.Graph) (*pb.DumpResp, error) {
 	// TODO: add in the subgraph and levels
-	nodesIter := s.graph.Nodes()
-	edgesIter := s.graph.Edges()
+	nodesIter := g.Nodes()
+	edgesIter := g.Edges()
 
 	dump := &pb.DumpResp{
 		Nodes: make([]*pb.NodeResp, nodesIter.Size()),
@@ -99,6 +95,19 @@ func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error
 	}
 
 	return dump, nil
+}
+
+func (s *server) Query(ctx context.Context, req *pb.QueryReq) (*pb.DumpResp, error) {
+	g, err := s.graph.Query(req.Query)
+	if err != nil {
+		return nil, err
+	}
+
+	return dump(g)
+}
+
+func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
+	return dump(s.graph)
 }
 
 // See server_node.go for node methods

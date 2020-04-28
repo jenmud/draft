@@ -15,14 +15,31 @@ type TestCase struct {
 func TestMatchQueries(t *testing.T) {
 	tests := []TestCase{
 		TestCase{
+			Query: `MATCH (n) RETURN n`,
+			Expected: QueryPlan{
+				ReadingClause: []ReadingClause{
+					ReadingClause{
+						Returns: []string{"n"},
+						Match: Match{
+							Nodes: []Node{
+								Node{
+									Variable: "n",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		TestCase{
 			Query: `MATCH (n:Person) RETURN n`,
 			Expected: QueryPlan{
 				ReadingClause: []ReadingClause{
 					ReadingClause{
 						Returns: []string{"n"},
-						Match: MatchQuery{
-							Nodes: []NodeQuery{
-								NodeQuery{
+						Match: Match{
+							Nodes: []Node{
+								Node{
 									Variable: "n",
 									Labels:   []string{"Person"},
 								},
@@ -43,9 +60,9 @@ func TestMatchQueries(t *testing.T) {
 				ReadingClause: []ReadingClause{
 					ReadingClause{
 						Returns: []string{"n"},
-						Match: MatchQuery{
-							Nodes: []NodeQuery{
-								NodeQuery{
+						Match: Match{
+							Nodes: []Node{
+								Node{
 									Variable: "n",
 									Labels:   []string{"Person", "Animal"},
 								},
@@ -61,9 +78,9 @@ func TestMatchQueries(t *testing.T) {
 				ReadingClause: []ReadingClause{
 					ReadingClause{
 						Returns: []string{"n"},
-						Match: MatchQuery{
-							Nodes: []NodeQuery{
-								NodeQuery{
+						Match: Match{
+							Nodes: []Node{
+								Node{
 									Variable: "n",
 									Labels:   []string{"Person", "Animal"},
 									Properties: map[string][]byte{

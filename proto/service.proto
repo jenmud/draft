@@ -89,15 +89,10 @@ message StatsResp {
     int32 total_memory_alloc = 6;
 }
 
+// QueryReq is query request.
 message QueryReq {
     string query = 1;
 }
-
-message QueryResp {
-    repeated NodeResp node = 1;
-    repeated EdgeResp edge = 2;
-}
-
 
 // Graph is the graph service.
 service Graph {
@@ -119,11 +114,12 @@ service Graph {
     // Edges returns all the edges in the graph.
     rpc Edges (EdgesReq) returns (stream EdgeResp);
 
-    // Query sends 
-    rpc Query(QueryReq) returns (QueryResp);
-
     // Stats returns some stats about the service.
     rpc Stats(StatsReq) returns (StatsResp);
+
+    // Query sends a query to the graph and returns a dump
+    // with the query results.
+    rpc Query(QueryReq) returns (DumpResp);
 
     // Dump the graph.
     rpc Dump(DumpReq) returns (DumpResp);
