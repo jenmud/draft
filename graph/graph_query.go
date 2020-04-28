@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/jenmud/draft/graph/parser/cypher"
@@ -48,6 +49,9 @@ func (g *Graph) Query(query string) (*Graph, error) {
 		for _, rc := range plan.ReadingClause {
 			for _, node := range rc.Match.Nodes {
 				n := nodesIter.Value().(Node)
+				if len(node.Labels) > 1 {
+					return subg, fmt.Errorf("[Query] Nodes with multiple labels not supported yet")
+				}
 				for _, label := range node.Labels {
 					if n.Label == label {
 						nodes = append(nodes, n)

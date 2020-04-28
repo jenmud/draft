@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestQuery(t *testing.T) {
+func TestQueryNodeLabel(t *testing.T) {
 	reader := bytes.NewReader(readTestData(t, "simple-graph.json"))
 
 	g, err := NewFromJSON(reader)
@@ -45,4 +45,16 @@ func TestQuery(t *testing.T) {
 	}
 
 	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestQueryNodeMutliLabel(t *testing.T) {
+	reader := bytes.NewReader(readTestData(t, "simple-graph.json"))
+
+	g, err := NewFromJSON(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = g.Query(`MATCH (n:person:animal) RETURN n`)
+	assert.NotNil(t, err)
 }
