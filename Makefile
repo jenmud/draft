@@ -17,4 +17,4 @@ fmt:
 	gofmt -w ./..
 
 test:
-	go test -v ./... -cover
+	go test -i -race -v ./... -cover
