@@ -38,61 +38,93 @@
             </nav>
           </div>
         <main class="mdl-layout__content">
-            <div class="mdl-grid fill">
+            <!-- main content grid -->
+            <div class="mdl-grid" style="height: 100%;">
+                <!-- info and query pannel -->
                 <div class="mdl-cell mdl-cell--4-col">
-                    <div class="mdl-card mdl-shadow--2dp fill-width">
-                        <div class="mdl-card__title"><h2 class="mdl-card__title-text">Information</h2></div>
-                        <div class="mdl-card__supporting-text">
-                            <table class="mdl-data-table mdl-js-data-table fill-width">
-                                <thead>
-                                    <tr>
-                                        <th class="mdl-data-table__cell--non-numeric">Metric</th>
-                                        <th class="mdl-data-table__cell--non-numeric">Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr id="start">
-                                        <td class="mdl-data-table__cell--non-numeric">StartTime</td>
-                                        <td id="startTime" class="mdl-data-table__cell--non-numeric">Unknown</td>
-                                        <div class="mdl-tooltip" data-mdl-for="start">Time when the service was started in UTC</div>
-                                    </tr>
-                                    <tr id="cpu">
-                                        <td class="mdl-data-table__cell--non-numeric">CPU count</td>
-                                        <td id="cpuCount">0</td>
-                                        <div class="mdl-tooltip" data-mdl-for="cpu">How many CPU's are available</div>
-                                    </tr>
-                                    <tr id="goroutines">
-                                        <td class="mdl-data-table__cell--non-numeric">Goroutine count</td>
-                                        <td id="goroutineCount"">0</td>
-                                        <div class="mdl-tooltip" data-mdl-for="goroutines">The number of running goroutines</div>
-                                    </tr>
-                                    <tr id="mem">
-                                        <td class="mdl-data-table__cell--non-numeric">Memory Usage (Bytes)</td>
-                                        <td id="memUsage">0</td>
-                                        <div class="mdl-tooltip" data-mdl-for="mem">Total memory used in Bytes</div>
-                                    </tr>
-                                    <tr id="nodes">
-                                        <td class="mdl-data-table__cell--non-numeric">Node count</td>
-                                        <td id="nodeCount">0</td>
-                                        <div class="mdl-tooltip" data-mdl-for="nodes">Total number of nodes in the graph</div>
-                                    </tr>
-                                    <tr id="edges">
-                                        <td class="mdl-data-table__cell--non-numeric">Edge count</td>
-                                        <td id="edgeCount">0</td>
-                                        <div class="mdl-tooltip" data-mdl-for="edges">Total number of edges in the graph</div>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <!-- inner grid -->
+                    <div class="mdl-grid" style="padding-top: unset;">
+                        <!-- Query card -->
+                        <div class="mdl-cell" style="width: 100%; height: 100%">
+                            <div class="mdl-card mdl-shadow--2dp" style="width: 100%; height: 100%;">
+                                <div class="mdl-card__title card-title-colors"><h2 class="mdl-card__title-text">Query</h2></div>
+                                <div class="mdl-card__supporting-text">
+                                    <div style="height: 100%;">
+                                        <form action="/query" method="POST">
+                                            <div class="mdl-textfield mdl-js-textfield" style="width: 100%">
+                                            <textarea class="mdl-textfield__input" type="text" rows= "3" id="cypher" style="width: 100% !important;"></textarea>
+                                            <label class="mdl-textfield__label" for="cypher">Cypher query...</label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="mdl-card__actions mdl-card--border">
+                                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Query</a>
+                                </div>
+                            </div>
                         </div>
+                        <!-- end Query card -->
+                        <!-- Info card -->
+                        <div class="mdl-cell" style="width: 100%">
+                            <div class="mdl-card mdl-shadow--2dp" style="width: 100%;">
+                                <div class="mdl-card__title card-title-colors"><h2 class="mdl-card__title-text">Information</h2></div>
+                                <div class="mdl-card__supporting-text">
+                                    <table class="mdl-data-table mdl-js-data-table" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th class="mdl-data-table__cell--non-numeric">Metric</th>
+                                                <th class="mdl-data-table__cell--non-numeric">Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="start">
+                                                <td class="mdl-data-table__cell--non-numeric">StartTime</td>
+                                                <td id="startTime" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                                                <div class="mdl-tooltip" data-mdl-for="start">Time when the service was started in UTC</div>
+                                            </tr>
+                                            <tr id="cpu">
+                                                <td class="mdl-data-table__cell--non-numeric">CPU count</td>
+                                                <td id="cpuCount">0</td>
+                                                <div class="mdl-tooltip" data-mdl-for="cpu">How many CPU's are available</div>
+                                            </tr>
+                                            <tr id="goroutines">
+                                                <td class="mdl-data-table__cell--non-numeric">Goroutine count</td>
+                                                <td id="goroutineCount"">0</td>
+                                                <div class="mdl-tooltip" data-mdl-for="goroutines">The number of running goroutines</div>
+                                            </tr>
+                                            <tr id="mem">
+                                                <td class="mdl-data-table__cell--non-numeric">Memory Usage (Bytes)</td>
+                                                <td id="memUsage">0</td>
+                                                <div class="mdl-tooltip" data-mdl-for="mem">Total memory used in Bytes</div>
+                                            </tr>
+                                            <tr id="nodes">
+                                                <td class="mdl-data-table__cell--non-numeric">Node count</td>
+                                                <td id="nodeCount">0</td>
+                                                <div class="mdl-tooltip" data-mdl-for="nodes">Total number of nodes in the graph</div>
+                                            </tr>
+                                            <tr id="edges">
+                                                <td class="mdl-data-table__cell--non-numeric">Edge count</td>
+                                                <td id="edgeCount">0</td>
+                                                <div class="mdl-tooltip" data-mdl-for="edges">Total number of edges in the graph</div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end Info card -->
                     </div>
+                    <!-- end inner grid -->
                 </div>
-                <div class="mdl-cell mdl-cell--8-col">
-                    <div class="mdl-card mdl-shadow--2dp fill">
-                        <div class="mdl-card__title"><h2 class="mdl-card__title-text">Lense</h2></div>
-                        <div id="graph"></div>
+                <!-- end and query pannel -->
+                <div class="mdl-cell mdl-cell--8-col" style="padding-top: 8px;">
+                    <div class="mdl-card mdl-shadow--2dp" style="width: 100%; height: 98%">
+                            <div class="mdl-card__title card-title-colors"><h2 class="mdl-card__title-text">Lense</h2></div>
+                            <div id="graph"></div>
                     </div>
                 </div>
             </div>
+            <!-- end main content grid -->
         </main>
     </div>
 

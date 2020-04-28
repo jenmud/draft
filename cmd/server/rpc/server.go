@@ -56,6 +56,10 @@ func (s *server) Save(w io.Writer) error {
 	return err
 }
 
+func (s *server) Query(ctx context.Context, req *pb.QueryReq) (*pb.QueryResp, error) {
+	panic(req.Query)
+}
+
 func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
 	// TODO: add in the subgraph and levels
 	nodesIter := s.graph.Nodes()
