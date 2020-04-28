@@ -1,4 +1,4 @@
-all: go-proto
+all: go-proto build-cypher
 
 go-proto:
 	protoc --proto_path=./proto --go_out=plugins=grpc:./service service.proto
@@ -9,6 +9,9 @@ go-proto:
 
 build:
 	go build -o build/draft-server cmd/server/*.go
+
+build-cypher:
+	pigeon graph/parser/cypher/cypher.peg | goimports > graph/parser/cypher/cypher.go
 
 fmt:
 	gofmt -w ./..
