@@ -59,6 +59,33 @@ func index(w http.ResponseWriter, r *http.Request) {
 	w.Write(html)
 }
 
+// assetJSONPOST serves JSON assets with a query.
+func assetJSONQuery(w http.ResponseWriter, r *http.Request) {
+	// parse the post form
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	query := r.FormValue("cypher")
+	log.Printf("Form data %v: %s", r.Form, query)
+
+	dump, err := client.Query(r.Context(), &pb.QueryReq{Query: query})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	data, err := json.Marshal(dump)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(data)
+}
+
 // assetJSON serves JSON assets.
 func assetJSON(w http.ResponseWriter, r *http.Request) {
 	dump, err := client.Dump(r.Context(), &pb.DumpReq{})
@@ -98,8 +125,9 @@ func statsJSON(w http.ResponseWriter, r *http.Request) {
 // run start the RPC service.
 func run(address string) error {
 	router := mux.NewRouter()
-	router.HandleFunc("/", index)
-	router.HandleFunc("/assets/json", assetJSON)
+	router.HandleFunc("/", index).Methods("GET")
+	router.HandleFunc("/assets/json", assetJSON).Methods("GET")
+	router.HandleFunc("/assets/json", assetJSONQuery).Methods("POST")
 	router.HandleFunc("/stats/json", statsJSON)
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(static)))
 	log.Printf("[%s] Service accepting connections on %s", "run", address)
