@@ -3,8 +3,8 @@
 package cypher
 }
 
-Statement <- query:Query EOF {
-    log.Printf("%s", c.text)
+Statement <- _ query:Query _ EOF {
+    log.Printf("Query: %s", c.text)
     q := QueryPlan{
         ReadingClause: []ReadingClause{query.(ReadingClause)},
     }
@@ -13,38 +13,55 @@ Statement <- query:Query EOF {
 }
 
 Query <- regularQuery:RegularQuery {
+    log.Printf("Query: %s", c.text)
     return regularQuery, nil
 }
 
 RegularQuery <-  singleQuery:SingleQuery {
+    log.Printf("RegularQuery: %s", c.text)
     return singleQuery, nil
 }
 
-SingleQuery <- clause:ReadingClause _ ret:Return {
-    if ret == nil {
+SingleQuery <- matches:(ReadingClause _)+ returns:Return {
+    log.Printf("SingleQuery: %s", c.text)
+    if returns == nil {
         return nil, fmt.Errorf("RETURN missing and is required")
     }
 
-    cl := clause.(ReadingClause)
-    cl.Returns = []string{ret.(string)}
-    return cl, nil
-}
-
-ReadingClause <- match:Match {
     clause := ReadingClause{
-        Match: match.(Match),
+        Matches: []Match{},
+        Returns: returns.([]string),
+    }
+
+    for _, match := range toIfaceSlice(matches) {
+        m := toIfaceSlice(match)
+        clause.Matches = append(clause.Matches, m[0].(Match))
     }
 
     return clause, nil
 }
 
-Return <- R E T U R N  _ v:Variable {
-    return v.(string), nil
+ReadingClause <- match:Match {
+    log.Printf("ReadingClause: %s", c.text)
+    return match.(Match), nil
+}
+
+Return <- R E T U R N  _ variable:Variable _ extra:(',' _ Variable)* {
+    log.Printf("Return: %s", c.text)
+    extras := toIfaceSlice(extra)
+    log.Printf("Vars: %#v, extra: %#v", variable, extra)
+    variables := []string{variable.(string)}
+    for _, r := range extras {
+        v := toIfaceSlice(r)
+        variables = append(variables, v[len(v) - 1].(string))
+    }
+    return variables, nil
 }
 
 Match <- M A T C H _ pattern:Pattern {
-    plan := Match{Nodes: []Node{pattern.(Node)}}
-    return plan, nil
+    log.Printf("Match: %s", c.text)
+    match := Match{Nodes: []Node{pattern.(Node)}}
+    return match, nil
 }
 
 Pattern <- PatternPart 
@@ -167,7 +184,7 @@ Integer <- [0-9]+ {
 
 BoolLiteral <- T "rue" { return true, nil } / F "alse" { return false, nil}
 
-_ "whitespace" ← [ \t\r\n]*
+_ "whitespace" <- [ \t\r\n]*
 
 A <- ('A' / 'a')
 B <- ('B' / 'b')

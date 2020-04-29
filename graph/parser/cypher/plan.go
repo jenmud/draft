@@ -17,7 +17,7 @@ type KV struct {
 
 // ReadingClause is a immutable read/query.
 type ReadingClause struct {
-	Match   Match
+	Matches []Match
 	Returns []string
 }
 
