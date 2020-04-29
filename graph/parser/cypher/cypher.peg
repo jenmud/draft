@@ -38,6 +38,20 @@ SingleQuery <- matches:(ReadingClause _)+ returns:Return {
         clause.Matches = append(clause.Matches, m[0].(Match))
     }
 
+    expected := map[string]bool{}
+
+    for _, v := range clause.Returns {
+        expected[v] = false
+    }
+
+    for _, m := range clause.Matches {
+        for _, n := range m.Nodes {
+            if _, ok := expected[n.Variable]; !ok {
+                return nil, fmt.Errorf("Missing return variable %s", n.Variable)
+            }
+        }
+    }
+
     return clause, nil
 }
 

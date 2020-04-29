@@ -93,6 +93,16 @@ func TestMatchQueries(t *testing.T) {
 			},
 		},
 		TestCase{
+			Name: "MultipleMatchReturnsVarsDontMatch",
+			Query: `
+			MATCH (n:Person)
+			MATCH (m:Animal)
+			RETURN n, missing
+			`,
+			Expected:    QueryPlan{},
+			ShouldError: true,
+		},
+		TestCase{
 			Name:        "SingleMatchSingleLabelNoReturn",
 			Query:       `MATCH (n:Person)`,
 			ShouldError: true,
