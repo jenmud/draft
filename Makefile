@@ -1,6 +1,6 @@
-all: go-proto build-cypher
+all: gen-go-proto gen-cypher
 
-go-proto:
+gen-go-proto:
 	protoc --proto_path=./proto --go_out=plugins=grpc:./service service.proto
 
 # js-proto:
@@ -10,11 +10,11 @@ go-proto:
 build:
 	go build -o build/draft-server cmd/server/*.go
 
-build-cypher:
+gen-cypher:
 	pigeon graph/parser/cypher/cypher.peg | goimports > graph/parser/cypher/cypher.go
 
 fmt:
 	gofmt -w ./..
 
-test:
+test: gen-go-proto gen-cypher
 	go test -timeout 30s -race -v ./... -cover

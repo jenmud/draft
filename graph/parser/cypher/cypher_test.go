@@ -55,7 +55,12 @@ func TestMatchQueries(t *testing.T) {
 			Expected:    QueryPlan{},
 		},
 		TestCase{
-			Query: `MATCH (n:Person:Animal) RETURN n`,
+			Query:       `MATCH (n:Person:Mutliple:Not:Supported)`,
+			ShouldError: true,
+			Expected:    QueryPlan{},
+		},
+		TestCase{
+			Query: `MATCH (n:Person) RETURN n`,
 			Expected: QueryPlan{
 				ReadingClause: []ReadingClause{
 					ReadingClause{
@@ -64,7 +69,7 @@ func TestMatchQueries(t *testing.T) {
 							Nodes: []Node{
 								Node{
 									Variable: "n",
-									Labels:   []string{"Person", "Animal"},
+									Labels:   []string{"Person"},
 								},
 							},
 						},
@@ -73,7 +78,7 @@ func TestMatchQueries(t *testing.T) {
 			},
 		},
 		TestCase{
-			Query: `MATCH (n:Person:Animal {name: "Foo", surname: 'Bar', age: 21, active: true, address: "My address is private"}) RETURN n`,
+			Query: `MATCH (n:Person {name: "Foo", surname: 'Bar', age: 21, active: true, address: "My address is private"}) RETURN n`,
 			Expected: QueryPlan{
 				ReadingClause: []ReadingClause{
 					ReadingClause{
@@ -82,7 +87,7 @@ func TestMatchQueries(t *testing.T) {
 							Nodes: []Node{
 								Node{
 									Variable: "n",
-									Labels:   []string{"Person", "Animal"},
+									Labels:   []string{"Person"},
 									Properties: map[string][]byte{
 										"name":    []byte("Foo"),
 										"surname": []byte("Bar"),
@@ -98,7 +103,7 @@ func TestMatchQueries(t *testing.T) {
 			},
 		},
 		TestCase{
-			Query:       `MATCH (n:Person:Animal {name: "Foo", name: 'Bar'}) RETURN n`,
+			Query:       `MATCH (n:Person {name: "Foo", name: 'Bar'}) RETURN n`,
 			ShouldError: true,
 			Expected:    QueryPlan{},
 		},

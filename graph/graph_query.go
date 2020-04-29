@@ -1,9 +1,6 @@
 package graph
 
 import (
-	"fmt"
-	"sync"
-
 	"github.com/jenmud/draft/graph/parser/cypher"
 )
 
@@ -11,8 +8,7 @@ import (
 type Eval func(Node) bool
 
 // reducer is a mapping function for pulling out nodes that evaluate to true.
-func reducer(wg *sync.WaitGroup, in <-chan Node, out chan<- Node, evaluator Eval) {
-	defer wg.Done()
+func reducer(in <-chan Node, out chan<- Node, evaluator Eval) {
 	for node := range in {
 		if evaluator(node) {
 			out <- node
@@ -29,6 +25,25 @@ func mapper(nodes Iterator, out chan<- Node) {
 	close(out)
 }
 
+// filterByLables filters nodes which contain the given labels.
+func filterByLabels(labels []string, nodes <-chan Node, out chan<- Node) {
+	for node := range nodes {
+		if len(labels) == 0 {
+			out <- node
+			continue
+		}
+
+	labelLoop:
+		for _, label := range labels {
+			if node.Label == label {
+				out <- node
+				break labelLoop
+			}
+		}
+	}
+
+}
+
 // Query takes a query string and returns a subgraph containing
 // the query results.
 func (g *Graph) Query(query string) (*Graph, error) {
@@ -42,30 +57,23 @@ func (g *Graph) Query(query string) (*Graph, error) {
 	plan := queryResult.(cypher.QueryPlan)
 
 	nodesIter := g.Nodes()
-	nodes := []Node{}
+	nodes := make(chan Node, nodesIter.Size())
+	final := make(chan Node, nodesIter.Size())
+
+	for nodesIter.Next() {
+		nodes <- nodesIter.Value().(Node)
+	}
+	close(nodes)
 
 	// search for nodes
-	for nodesIter.Next() {
-		for _, rc := range plan.ReadingClause {
-			for _, node := range rc.Match.Nodes {
-				n := nodesIter.Value().(Node)
-				switch {
-				case len(node.Labels) == 0:
-					nodes = append(nodes, n)
-				case len(node.Labels) == 1:
-					for _, label := range node.Labels {
-						if n.Label == label {
-							nodes = append(nodes, n)
-						}
-					}
-				case len(node.Labels) > 1:
-					return subg, fmt.Errorf("[Query] Nodes with multiple labels not supported yet")
-				}
-			}
+	for _, rc := range plan.ReadingClause {
+		for _, node := range rc.Match.Nodes {
+			filterByLabels(node.Labels, nodes, final)
 		}
 	}
 
-	for _, node := range nodes {
+	close(final)
+	for node := range final {
 		if _, err := subg.AddNode(node.UID, node.Label, convertPropertiesToKV(node.Properties)...); err != nil {
 			return subg, err
 		}

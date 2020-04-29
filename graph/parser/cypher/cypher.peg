@@ -72,11 +72,17 @@ NodePattern <- '(' variable:Variable _ labels:NodeLabels? _ props:(Properties)? 
 }
 
 NodeLabels <- label:NodeLabel _ labels:(NodeLabel)*{
-    l := make([]string, 1 + len(labels.([]interface{})))
+    labelsList := toIfaceSlice(labels)
+
+    l := make([]string, 1 + len(labelsList))
     l[0] = label.(string)
 
-    for i, label := range labels.([]interface{}) {
+    for i, label := range labelsList {
         l[i+1] = label.(string)
+    }
+
+    if len(l) > 1 {
+        return nil, fmt.Errorf("Draft nodes only support a single label")
     }
 
     return l, nil
