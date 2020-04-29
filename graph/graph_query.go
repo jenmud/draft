@@ -67,8 +67,10 @@ func (g *Graph) Query(query string) (*Graph, error) {
 
 	// search for nodes
 	for _, rc := range plan.ReadingClause {
-		for _, node := range rc.Match.Nodes {
-			filterByLabels(node.Labels, nodes, final)
+		for _, match := range rc.Matches {
+			for _, node := range match.Nodes {
+				filterByLabels(node.Labels, nodes, final)
+			}
 		}
 	}
 
