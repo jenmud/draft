@@ -49,7 +49,8 @@
                             <form action="/assets/json" method="POST">
                                 <div class="mdl-card mdl-shadow--2dp" style="width: 100%; height: 100%;">
                                     <div class="mdl-card__title card-title-colors">
-                                        <h2 class="mdl-card__title-text">Query</h2>
+                                        <h2 id="query-title" class="mdl-card__title-text">Query</h2>
+                                        <div class="mdl-tooltip" data-mdl-for="query-title">Extremely striped down Cpyher query (more features to come)</div>
                                     </div>
                                     <div class="mdl-card__supporting-text">
                                         <div style="height: 100%;">
@@ -147,6 +148,9 @@
 
     <script src="/static/js/network.js"></script>
     <script src="/static/js/stats.js"></script>
+    <script>
+        document.onload = FetchGraphData();
+    </script>
 </body>
 
 </html>

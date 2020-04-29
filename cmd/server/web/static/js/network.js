@@ -4,6 +4,7 @@ var options = {
     height: '100%',
     width: '100%',
     nodes: {
+        shape: 'circle',
         scaling: { min: 10, max: 20 },
         chosen: {
             node: (values, id, selected, hovering) => {
