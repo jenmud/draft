@@ -4,7 +4,6 @@ package cypher
 }
 
 Statement <- _ query:Query _ EOF {
-    log.Printf("Query: %s", c.text)
     q := QueryPlan{
         ReadingClause: []ReadingClause{query.(ReadingClause)},
     }
@@ -13,17 +12,14 @@ Statement <- _ query:Query _ EOF {
 }
 
 Query <- regularQuery:RegularQuery {
-    log.Printf("Query: %s", c.text)
     return regularQuery, nil
 }
 
 RegularQuery <-  singleQuery:SingleQuery {
-    log.Printf("RegularQuery: %s", c.text)
     return singleQuery, nil
 }
 
 SingleQuery <- matches:(ReadingClause _)+ returns:Return {
-    log.Printf("SingleQuery: %s", c.text)
     if returns == nil {
         return nil, fmt.Errorf("RETURN missing and is required")
     }
@@ -56,14 +52,11 @@ SingleQuery <- matches:(ReadingClause _)+ returns:Return {
 }
 
 ReadingClause <- match:Match {
-    log.Printf("ReadingClause: %s", c.text)
     return match.(Match), nil
 }
 
 Return <- R E T U R N  _ variable:Variable _ extra:(',' _ Variable)* {
-    log.Printf("Return: %s", c.text)
     extras := toIfaceSlice(extra)
-    log.Printf("Vars: %#v, extra: %#v", variable, extra)
     variables := []string{variable.(string)}
     for _, r := range extras {
         v := toIfaceSlice(r)
@@ -73,7 +66,6 @@ Return <- R E T U R N  _ variable:Variable _ extra:(',' _ Variable)* {
 }
 
 Match <- M A T C H _ pattern:Pattern {
-    log.Printf("Match: %s", c.text)
     match := Match{Nodes: []Node{pattern.(Node)}}
     return match, nil
 }
