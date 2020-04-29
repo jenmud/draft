@@ -1,9 +1,39 @@
-var network;
+var container = document.getElementById('graph');
+
+var options = {
+    height: '100%',
+    width: '100%',
+    nodes: {
+        scaling: { min: 10, max: 20 },
+        chosen: {
+            node: (values, id, selected, hovering) => {
+                values.color = "#ffe6e6";
+                values.shadow = true;
+            }
+        },
+    },
+    edges: {
+        chosen: {
+            edge: (values, id, selected, hovering) => {
+                values.color = "red";
+            },
+        },
+    },
+    physics: {
+        solver: "forceAtlas2Based",
+    },
+};
+
+var network = new vis.Network(container, [], options);
 
 function convertJSON(data) {
     var options = {};
     var nodes = new vis.DataSet(options);
     var edges = new vis.DataSet(options);
+
+    if (data.nodes == undefined) {
+        data.nodes = [];
+    }
 
     data.nodes.forEach(element => {
         var node = {
@@ -21,6 +51,10 @@ function convertJSON(data) {
         console.debug(node);
         nodes.add(node);
     });
+
+    if (data.edges == undefined) {
+        data.edges = [];
+    }
 
     data.edges.forEach(element => {
         var edge = {
@@ -45,48 +79,40 @@ function convertJSON(data) {
     return { "nodes": nodes, "edges": edges };
 }
 
-fetch("/assets/json")
-    .then((resp) => { return resp.json(); })
-    .then((dataJSON) => { return convertJSON(dataJSON); })
-    .then((store) => {
-        console.debug(store);
+function GetQuery() {
+    var queryTextArea = document.getElementById("cypher")
+    return queryTextArea.name + "=" + queryTextArea.value;
+}
 
-        var options = {
-            height: '100%',
-            width: '100%',
-            nodes: {
-                scaling: { min: 10, max: 20 },
-                chosen: {
-                    node: (values, id, selected, hovering) => {
-                        values.color = "#ffe6e6";
-                        values.shadow = true;
-                    }
-                },
-            },
-            edges: {
-                chosen: {
-                    edge: (values, id, selected, hovering) => {
-                        values.color = "red";
-                    },
-                },
-            },
-            physics: {
-                solver: "forceAtlas2Based",
+function FetchGraphData() {
+    fetch("/assets/json", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: GetQuery() })
+        .then((resp) => {
+            if (resp.ok) {
+                return resp.json();
+            } else {
+                var notify = document.getElementById("query-toast");
+                resp.text().then((text) => {
+                    notify.MaterialSnackbar.showSnackbar(
+                        {
+                            message: text
+                        }
+                    )
+                })
+
+                return {};
             }
-        };
-
-        var container = document.getElementById('graph');
-        var network = new vis.Network(container, store, options);
-
-        network.on(
-            "drag",
-            () => {
-                network.setOptions(
-                    {
-                        nodes: { physics: false },
-                        edges: { physics: false },
-                    }
-                )
-            }
-        );
-    })
+        })
+        .then((dataJSON) => { return convertJSON(dataJSON); })
+        .then((store) => {
+            console.debug(store);
+            network.setData(store);
+        })
+        .catch((error) => {
+            var notify = document.getElementById("query-toast");
+            notify.MaterialSnackbar.showSnackbar(
+                {
+                    message: error
+                }
+            )
+        })
+}
