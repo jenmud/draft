@@ -41,7 +41,32 @@ func filterByLabels(labels []string, nodes <-chan Node, out chan<- Node) {
 			}
 		}
 	}
+}
 
+// filterByProperties filters nodes which contain the given labels.
+//func filterByLabels(labels []string, nodes <-chan Node, out chan<- Node) {
+//	for node := range nodes {
+//		if len(labels) == 0 {
+//			out <- node
+//			continue
+//		}
+//
+//	labelLoop:
+//		for _, label := range labels {
+//			if node.Label == label {
+//				out <- node
+//				break labelLoop
+//			}
+//		}
+//	}
+//}
+
+// nodeMapper maps iterItems to graph nodes.
+func nodeMapper(nodes <-chan interface{}, out chan<- Node) {
+	for node := range nodes {
+		out <- node.(Node)
+	}
+	close(out)
 }
 
 // Query takes a query string and returns a subgraph containing
@@ -55,19 +80,13 @@ func (g *Graph) Query(query string) (*Graph, error) {
 	}
 
 	plan := queryResult.(cypher.QueryPlan)
-
-	nodesIter := g.Nodes()
-	nodes := make(chan Node, nodesIter.Size())
-	final := make(chan Node, nodesIter.Size())
-
-	for nodesIter.Next() {
-		nodes <- nodesIter.Value().(Node)
-	}
-	close(nodes)
+	final := make(chan Node, g.NodeCount())
 
 	// search for nodes
 	for _, rc := range plan.ReadingClause {
 		for _, match := range rc.Matches {
+			nodes := make(chan Node, g.NodeCount())
+			nodeMapper(g.Nodes().Channel(), nodes)
 			for _, node := range match.Nodes {
 				filterByLabels(node.Labels, nodes, final)
 			}

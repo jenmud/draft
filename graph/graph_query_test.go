@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/jenmud/draft/graph/iterator"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -63,6 +64,16 @@ func TestFilterByLabels(t *testing.T) {
 	}
 }
 
+func TestNodeMapper(t *testing.T) {
+	n1 := NewNode("node-n1", "person")
+	n2 := NewNode("node-n2", "car")
+	iter := iterator.New([]interface{}{n1, n2})
+	out := make(chan Node, 2)
+	nodeMapper(iter.Channel(), out)
+	assert.Equal(t, n1, <-out)
+	assert.Equal(t, n2, <-out)
+}
+
 func TestQuery(t *testing.T) {
 	type TestCase struct {
 		g           *Graph
@@ -113,6 +124,37 @@ func TestQuery(t *testing.T) {
 			Name:  "OnlyShouldContainAnimalNodes",
 			Query: `MATCH (n:animal) RETURN n`,
 			Expected: []Node{
+				Node{
+					UID:        "node-dog",
+					Label:      "animal",
+					Properties: map[string][]byte{"name": []byte("socks")},
+					inEdges:    map[string]struct{}{},
+					outEdges:   map[string]struct{}{},
+				},
+			},
+		},
+		TestCase{
+			g:    g,
+			Name: "MultiMatch",
+			Query: `
+			MATCH (n:animal)
+			MATCH (m:person)
+			RETURN n, m`,
+			Expected: []Node{
+				Node{
+					UID:        "node-foo",
+					Label:      "person",
+					Properties: map[string][]byte{"name": []byte("foo")},
+					inEdges:    map[string]struct{}{},
+					outEdges:   map[string]struct{}{},
+				},
+				Node{
+					UID:        "node-bar",
+					Label:      "person",
+					Properties: map[string][]byte{"name": []byte("bar")},
+					inEdges:    map[string]struct{}{},
+					outEdges:   map[string]struct{}{},
+				},
 				Node{
 					UID:        "node-dog",
 					Label:      "animal",
