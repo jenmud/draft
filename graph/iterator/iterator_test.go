@@ -6,27 +6,40 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIterator(t *testing.T) {
-	item1 := 1
-	item2 := 2
-	item3 := 3
+func TestValue(t *testing.T) {
+	iter := New([]interface{}{1, 2})
+	assert.Equal(t, 1, iter.Value())
+	assert.Equal(t, 1, iter.Value()) // check that calling again returns the same item
+}
 
-	iter := Iterator{data: []interface{}{item1, item2, item3}}
+func TestValue__no_items(t *testing.T) {
+	iter := New([]interface{}{})
+	assert.Equal(t, nil, iter.Value())
+	assert.Equal(t, nil, iter.Value()) // check that calling again returns the same item
+}
 
-	actual1 := iter.Value()
-	assert.Equal(t, item1, actual1)
-	assert.Equal(t, true, iter.Next())
-
-	actual2 := iter.Value()
-	assert.Equal(t, item2, actual2)
-	assert.Equal(t, true, iter.Next())
-
-	actual3 := iter.Value()
-	assert.Equal(t, item3, actual3)
-	assert.Equal(t, false, iter.Next())
+func TestNext(t *testing.T) {
+	iter := New([]interface{}{1, 2, 3})
+	assert.Equal(t, true, iter.Next(), "expected true but got false (Expected value: %v, Actual value: %v)", 1, iter.Value())
+	assert.Equal(t, true, iter.Next(), "expected true but got false (Expected value: %v, Actual value: %v)", 2, iter.Value())
+	assert.Equal(t, true, iter.Next(), "expected true but got false (Expected value: %v, Actual value: %v)", 3, iter.Value())
+	assert.Equal(t, false, iter.Next(), "expected false but got true (Expected value: %v, Actual value: %v)", nil, iter.Value())
 }
 
 func TestSize(t *testing.T) {
-	iter := Iterator{data: []interface{}{1, 2, 3}}
+	iter := New([]interface{}{1, 2, 3})
 	assert.Equal(t, 3, iter.Size())
+}
+
+func TestChannel(t *testing.T) {
+	iter := New([]interface{}{1, 2, 3})
+
+	expected := []interface{}{1, 2, 3}
+	actual := []interface{}{}
+
+	for item := range iter.Channel() {
+		actual = append(actual, item)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
 }
