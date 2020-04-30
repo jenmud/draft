@@ -8,4 +8,6 @@ type Iterator interface {
 	Next() bool
 	// Size returns the total item count in the iterator
 	Size() int
+	// Channel returns the items in the iterator as a channel.
+	Channel() <-chan interface{}
 }
