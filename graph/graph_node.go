@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/jenmud/draft/graph/iterator"
@@ -84,6 +85,88 @@ func (g *Graph) Nodes() Iterator {
 	for _, node := range g.nodes {
 		nodes[count] = node
 		count++
+	}
+
+	return iterator.New(nodes)
+}
+
+// nodeMapper converts interfaces into Nodes
+func nodeMapper(in <-chan interface{}, out chan<- Node) {
+	for item := range in {
+		out <- item.(Node)
+	}
+	close(out)
+}
+
+// labelReducer filters for nodes that have the given labels.
+func labelReducer(labels []string, in <-chan Node, out chan<- Node) {
+	for node := range in {
+		if len(labels) == 0 {
+			out <- node
+			continue
+		}
+
+		for _, label := range labels {
+			if node.Label == label {
+				out <- node
+				continue
+			}
+		}
+	}
+
+	close(out)
+}
+
+// propReducer filters for nodes that have the given properties.
+func propReducer(props map[string][]byte, in <-chan Node, out chan<- Node) {
+	for node := range in {
+		if len(props) == 0 {
+			out <- node
+			continue
+		}
+
+		var allMatched = false
+		for key, value := range props {
+			nvalue, ok := node.Properties[key]
+			if !ok {
+				allMatched = false
+				break
+			}
+
+			if !bytes.Equal(value, nvalue) {
+				allMatched = false
+				break
+			}
+
+			allMatched = true
+		}
+
+		if allMatched {
+			out <- node
+		}
+	}
+
+	close(out)
+}
+
+// NodesBy returns a node iterator with filtered nodes.
+// If labels is an empty list, then any label will be used.
+// If props is an empty map, no properties will be used for filtering.
+func (g *Graph) NodesBy(labels []string, props map[string][]byte) Iterator {
+	g.lock.RLock()
+	defer g.lock.RUnlock()
+
+	in := make(chan Node, len(g.nodes))
+	labelFiltered := make(chan Node, len(g.nodes))
+	final := make(chan Node)
+
+	go nodeMapper(g.Nodes().Channel(), in)
+	go labelReducer(labels, in, labelFiltered)
+	go propReducer(props, labelFiltered, final)
+
+	nodes := []interface{}{}
+	for node := range final {
+		nodes = append(nodes, node)
 	}
 
 	return iterator.New(nodes)

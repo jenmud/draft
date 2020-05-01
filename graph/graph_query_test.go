@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/jenmud/draft/graph/iterator"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,10 +15,13 @@ func TestFilterByLabels(t *testing.T) {
 		Name     string
 	}
 
-	n1 := NewNode("node-n1", "person")
-	n2 := NewNode("node-n2", "car")
-	n3 := NewNode("node-n3", "person")
-	n4 := NewNode("node-n4", "bike")
+	g := New()
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "car")
+	n3, _ := g.AddNode("node-3", "person")
+	n4, _ := g.AddNode("node-4", "bike")
+
+	subg := New()
 
 	tests := []TestCase{
 		TestCase{
@@ -43,37 +45,26 @@ func TestFilterByLabels(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		nodes := make(chan Node, len(test.Nodes))
-		out := make(chan Node, len(test.Nodes))
-
-		for _, node := range test.Nodes {
-			nodes <- node
-		}
-
-		close(nodes)
-
-		filterByLabels(test.Labels, nodes, out)
-		close(out)
-
+		filterByLabels(test.Labels, subg, g.Nodes())
 		actual := []Node{}
-		for node := range out {
-			actual = append(actual, node)
+		nodes := subg.Nodes()
+		for nodes.Next() {
+			actual = append(actual, nodes.Value().(Node))
 		}
-
 		assert.ElementsMatch(t, test.Expected, actual, "%s expected %v but got %v", test.Name, test.Expected, actual)
 	}
 }
 
-func TestNodeMapper(t *testing.T) {
-	n1 := NewNode("node-n1", "person")
-	n2 := NewNode("node-n2", "car")
-	iter := iterator.New([]interface{}{n1, n2})
-	out := make(chan Node, 2)
-	nodeMapper(iter.Channel(), out)
-	assert.Equal(t, n1, <-out)
-	assert.Equal(t, n2, <-out)
-}
-
+// func TestNodeMapper(t *testing.T) {
+// 	n1 := NewNode("node-n1", "person")
+// 	n2 := NewNode("node-n2", "car")
+// 	iter := iterator.New([]interface{}{n1, n2})
+// 	out := make(chan Node, 2)
+// 	nodeMapper(iter.Channel(), out)
+// 	assert.Equal(t, n1, <-out)
+// 	assert.Equal(t, n2, <-out)
+// }
+//
 func TestQuery(t *testing.T) {
 	type TestCase struct {
 		g           *Graph
@@ -135,7 +126,7 @@ func TestQuery(t *testing.T) {
 		},
 		TestCase{
 			g:    g,
-			Name: "MultiMatch",
+			Name: "MultiMatchByLabel",
 			Query: `
 			MATCH (n:animal)
 			MATCH (m:person)

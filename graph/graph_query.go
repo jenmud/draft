@@ -1,6 +1,8 @@
 package graph
 
 import (
+	"log"
+
 	"github.com/jenmud/draft/graph/parser/cypher"
 )
 
@@ -26,47 +28,28 @@ func mapper(nodes Iterator, out chan<- Node) {
 }
 
 // filterByLables filters nodes which contain the given labels.
-func filterByLabels(labels []string, nodes <-chan Node, out chan<- Node) {
-	for node := range nodes {
-		if len(labels) == 0 {
-			out <- node
-			continue
+func filterByLabels(labels []string, g *Graph, nodes Iterator) {
+	if len(labels) == 0 {
+		for nodes.Next() {
+			node := nodes.Value().(Node)
+			if _, err := g.AddNode(node.UID, node.Label, convertPropertiesToKV(node.Properties)...); err != nil {
+				log.Printf("[filterByLabels] %s", err)
+			}
 		}
+	}
 
+	for nodes.Next() {
+		node := nodes.Value().(Node)
 	labelLoop:
 		for _, label := range labels {
 			if node.Label == label {
-				out <- node
+				if _, err := g.AddNode(node.UID, node.Label, convertPropertiesToKV(node.Properties)...); err != nil {
+					log.Printf("[filterByLabels] %s", err)
+				}
 				break labelLoop
 			}
 		}
 	}
-}
-
-// filterByProperties filters nodes which contain the given labels.
-//func filterByLabels(labels []string, nodes <-chan Node, out chan<- Node) {
-//	for node := range nodes {
-//		if len(labels) == 0 {
-//			out <- node
-//			continue
-//		}
-//
-//	labelLoop:
-//		for _, label := range labels {
-//			if node.Label == label {
-//				out <- node
-//				break labelLoop
-//			}
-//		}
-//	}
-//}
-
-// nodeMapper maps iterItems to graph nodes.
-func nodeMapper(nodes <-chan interface{}, out chan<- Node) {
-	for node := range nodes {
-		out <- node.(Node)
-	}
-	close(out)
 }
 
 // Query takes a query string and returns a subgraph containing
@@ -80,23 +63,14 @@ func (g *Graph) Query(query string) (*Graph, error) {
 	}
 
 	plan := queryResult.(cypher.QueryPlan)
-	final := make(chan Node, g.NodeCount())
 
 	// search for nodes
 	for _, rc := range plan.ReadingClause {
 		for _, match := range rc.Matches {
-			nodes := make(chan Node, g.NodeCount())
-			nodeMapper(g.Nodes().Channel(), nodes)
+			nodes := g.Nodes()
 			for _, node := range match.Nodes {
-				filterByLabels(node.Labels, nodes, final)
+				filterByLabels(node.Labels, subg, nodes)
 			}
-		}
-	}
-
-	close(final)
-	for node := range final {
-		if _, err := subg.AddNode(node.UID, node.Label, convertPropertiesToKV(node.Properties)...); err != nil {
-			return subg, err
 		}
 	}
 
