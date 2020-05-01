@@ -16,10 +16,8 @@ func (g *Graph) Query(query string) (*Graph, error) {
 		return nil, err
 	}
 
-	plan := queryResult.(cypher.QueryPlan)
-
 	// search for nodes
-	for _, rc := range plan.ReadingClause {
+	for _, rc := range queryResult.(cypher.QueryPlan).ReadingClause {
 		for _, match := range rc.Matches {
 			for _, node := range match.Nodes {
 				nodes := g.NodesBy(node.Labels, node.Properties)
