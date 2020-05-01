@@ -85,6 +85,13 @@ function GetQuery() {
     return queryTextArea.name + "=" + queryTextArea.value;
 }
 
+function FetchFullGraphData() {
+    fetch("/assets/json", { method: "GET", headers: { "Content-Type": "application/json" } })
+        .then((resp) => { return resp.json() })
+        .then((data) => { return convertJSON(data) })
+        .then((store) => { network.setData(store) })
+}
+
 function FetchGraphData() {
     fetch("/assets/json", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: GetQuery() })
         .then((resp) => {
