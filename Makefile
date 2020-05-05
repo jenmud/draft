@@ -13,6 +13,9 @@ build:
 gen-cypher:
 	pigeon graph/parser/cypher/cypher.peg | goimports > graph/parser/cypher/cypher.go
 
+pull-thirdparty:
+	go get -u github.com/mna/pigeon
+
 fmt:
 	gofmt -w ./..
 
