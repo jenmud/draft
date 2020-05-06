@@ -112,8 +112,12 @@ func (s *server) Query(ctx context.Context, req *pb.QueryReq, resp *pb.DumpResp)
 
 func (s *server) Dump(ctx context.Context, req *pb.DumpReq, resp *pb.DumpResp) error {
 	response, err := dump(s.graph)
+	if err != nil {
+		return fmt.Errorf("[Dump] Error trying to dump the graph: %v", err)
+	}
+
 	resp = response
-	return fmt.Errorf("[Dump] Error trying to dump the graph: %v", err)
+	return nil
 }
 
 // See server_node.go for node methods
