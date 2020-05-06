@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jenmud/draft/graph"
 	pb "github.com/jenmud/draft/service"
 )
 
-func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, error) {
+func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq, resp *pb.EdgeResp) error {
 	kvs := make([]graph.KV, len(req.Properties))
 
 	count := 0
@@ -18,10 +19,10 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, er
 
 	edge, err := s.graph.AddEdge(req.Uid, req.SourceUid, req.Label, req.TargetUid, kvs...)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("[AddEdge] Error adding edge: %v", err)
 	}
 
-	resp := pb.EdgeResp{
+	resp = &pb.EdgeResp{
 		Uid:        edge.UID,
 		SourceUid:  edge.SourceUID,
 		Label:      edge.Label,
@@ -29,36 +30,53 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq) (*pb.EdgeResp, er
 		Properties: edge.Properties,
 	}
 
-	return &resp, nil
+	return nil
 }
 
-func (s *server) RemoveEdge(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp, error) {
-	var errmsg string
+func (s *server) RemoveEdge(ctx context.Context, req *pb.UIDReq, resp *pb.RemoveResp) error {
+	resp = &pb.RemoveResp{Uid: req.Uid}
 
-	err := s.graph.RemoveEdge(req.Uid)
-	if err != nil {
-		errmsg = err.Error()
+	if err := s.graph.RemoveEdge(req.Uid); err != nil {
+		resp.Error = err.Error()
+		return fmt.Errorf("[RemoveEdge] Error removing edge: %v", err)
 	}
 
-	return &pb.RemoveResp{Uid: req.Uid, Success: err == nil, Error: errmsg}, nil
+	resp.Success = true // at this point every was successful
+	return nil
 }
 
-func (s *server) Edge(ctx context.Context, req *pb.UIDReq) (*pb.EdgeResp, error) {
+func (s *server) Edge(ctx context.Context, req *pb.UIDReq, resp *pb.EdgeResp) error {
 	edge, err := s.graph.Edge(req.Uid)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("[Edge] Error fetching edge: %v", err)
 	}
 
-	return &pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: edge.Properties}, nil
+	resp = &pb.EdgeResp{
+		Uid:        edge.UID,
+		SourceUid:  edge.SourceUID,
+		Label:      edge.Label,
+		TargetUid:  edge.TargetUID,
+		Properties: edge.Properties,
+	}
+
+	return nil
 }
 
-func (s *server) Edges(req *pb.EdgesReq, stream pb.Graph_EdgesServer) error {
+func (s *server) Edges(ctx context.Context, req *pb.EdgesReq, stream pb.Graph_EdgesStream) error {
 	iter := s.graph.Edges()
 	for iter.Next() {
 		edge := iter.Value().(graph.Edge)
-		resp := pb.EdgeResp{Uid: edge.UID, SourceUid: edge.SourceUID, Label: edge.Label, TargetUid: edge.TargetUID, Properties: edge.Properties}
+
+		resp := pb.EdgeResp{
+			Uid:        edge.UID,
+			SourceUid:  edge.SourceUID,
+			Label:      edge.Label,
+			TargetUid:  edge.TargetUID,
+			Properties: edge.Properties,
+		}
+
 		if err := stream.Send(&resp); err != nil {
-			return nil
+			return fmt.Errorf("[Edges] Error fetching and streaming edges: %v", err)
 		}
 	}
 

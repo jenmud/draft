@@ -5,29 +5,54 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
+	"time"
 
 	"github.com/jenmud/draft/graph"
 	pb "github.com/jenmud/draft/service"
-	"google.golang.org/grpc"
+	micro "github.com/micro/go-micro/v2"
+	microConfig "github.com/micro/go-micro/v2/config"
+	microEnv "github.com/micro/go-micro/v2/config/source/env"
+	microFlag "github.com/micro/go-micro/v2/config/source/flag"
 	"google.golang.org/protobuf/proto"
 )
 
 var (
-	addr  = ":8000"
-	store *graph.Graph
+	version = micro.Version("v0.0.0")
+	store   *graph.Graph
+	config  microConfig.Config
 )
+
+func parseArgs() {
+	var err error
+
+	config, err = microConfig.NewConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	flag.String("addr", ":", "Address to accept client connections on")
+	flag.String("name", "draft.srv", "Service name")
+	flag.String("dump", "", "Load a dump (.draft) file")
+	flag.Parse()
+
+	err = config.Load(
+		microEnv.NewSource(microEnv.WithPrefix("DRAFT")),
+		microFlag.NewSource(microFlag.IncludeUnset(true)),
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func init() {
 	store = graph.New()
+	parseArgs()
 
-	flag.StringVar(&addr, "addr", addr, "Address and port to service and accept client connections.")
-	dumpfile := flag.String("dump", "", "Load a dump (.draft) file.")
-	flag.Parse()
-
-	if dumpfile != nil && *dumpfile != "" {
-		log.Printf("Loading from %s", *dumpfile)
-		data, err := ioutil.ReadFile(*dumpfile)
+	dump := config.Get("dump").String("")
+	if dump != "" {
+		log.Printf("Loading from %s", dump)
+		data, err := ioutil.ReadFile(dump)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -45,6 +70,8 @@ func init() {
 
 // load a dump into the graph.
 func load(g *graph.Graph, dump pb.DumpResp) error {
+	start := time.Now()
+
 	for _, node := range dump.Nodes {
 		if _, err := g.AddNode(node.Uid, node.Label, convertServicePropsToGraphKVs(node.Properties)...); err != nil {
 			return fmt.Errorf("[load] %s", err)
@@ -57,19 +84,20 @@ func load(g *graph.Graph, dump pb.DumpResp) error {
 		}
 	}
 
+	log.Printf("Loaded %d nodes and %d edges in %s", g.NodeCount(), g.EdgeCount(), time.Now().Sub(start))
 	return nil
 }
 
 // run start the RPC service.
-func run(address string) error {
-	listener, err := net.Listen("tcp", address)
-	if err != nil {
-		return fmt.Errorf("[run] %s", err)
-	}
+func run() error {
+	mservice := micro.NewService(
+		version,
+		micro.Name(config.Get("name").String("draft.srv")),
+		micro.Address(config.Get("addr").String("0.0.0.0:")),
+	)
 
-	s := grpc.NewServer()
-	server := &server{graph: store}
-	pb.RegisterGraphServer(s, server)
+	pb.RegisterGraphHandler(mservice.Server(), &server{graph: store})
+	return mservice.Run()
 
 	// c := make(chan os.Signal, 1)
 
@@ -81,11 +109,9 @@ func run(address string) error {
 	// }()
 
 	// signal.Notify(c, os.Interrupt)
-	log.Printf("[%s] Service accepting connections on %s", "run", listener.Addr())
-	return s.Serve(listener)
 }
 
 // main is the main entrypoint.
 func main() {
-	log.Fatal(run(addr))
+	log.Fatal(run())
 }

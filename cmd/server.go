@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/jenmud/draft/graph"
@@ -26,9 +27,10 @@ type server struct {
 	graph *graph.Graph
 }
 
-func (s *server) Stats(ctx context.Context, req *pb.StatsReq) (*pb.StatsResp, error) {
+func (s *server) Stats(ctx context.Context, req *pb.StatsReq, resp *pb.StatsResp) error {
 	stats := s.graph.Stats()
-	resp := &pb.StatsResp{
+
+	resp = &pb.StatsResp{
 		NumCpu:           int32(stats.NumCPU),
 		NodeCount:        int32(stats.NodeCount),
 		EdgeCount:        int32(stats.EdgeCount),
@@ -37,17 +39,17 @@ func (s *server) Stats(ctx context.Context, req *pb.StatsReq) (*pb.StatsResp, er
 		TotalMemoryAlloc: int32(stats.MemStats.TotalAlloc),
 	}
 
-	return resp, nil
+	return nil
 }
 
 // Save the current graph.
 func (s *server) Save(w io.Writer) error {
-	dump, err := s.Dump(context.Background(), &pb.DumpReq{})
-	if err != nil {
+	resp := &pb.DumpResp{}
+	if err := s.Dump(context.Background(), &pb.DumpReq{}, resp); err != nil {
 		return err
 	}
 
-	output, err := proto.Marshal(dump)
+	output, err := proto.Marshal(resp)
 	if err != nil {
 		return err
 	}
@@ -97,17 +99,21 @@ func dump(g *graph.Graph) (*pb.DumpResp, error) {
 	return dump, nil
 }
 
-func (s *server) Query(ctx context.Context, req *pb.QueryReq) (*pb.DumpResp, error) {
+func (s *server) Query(ctx context.Context, req *pb.QueryReq, resp *pb.DumpResp) error {
 	g, err := s.graph.Query(req.Query)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("[Query] Error trying to execute a query: %v", err)
 	}
 
-	return dump(g)
+	response, err := dump(g)
+	resp = response
+	return fmt.Errorf("[Query] Error trying to dump query response: %v", err)
 }
 
-func (s *server) Dump(ctx context.Context, req *pb.DumpReq) (*pb.DumpResp, error) {
-	return dump(s.graph)
+func (s *server) Dump(ctx context.Context, req *pb.DumpReq, resp *pb.DumpResp) error {
+	response, err := dump(s.graph)
+	resp = response
+	return fmt.Errorf("[Dump] Error trying to dump the graph: %v", err)
 }
 
 // See server_node.go for node methods

@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jenmud/draft/graph"
 	pb "github.com/jenmud/draft/service"
 )
 
-func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, error) {
+func (s *server) AddNode(ctx context.Context, req *pb.NodeReq, resp *pb.NodeResp) error {
 	kvs := make([]graph.KV, len(req.Properties))
 
 	count := 0
@@ -18,10 +19,10 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, er
 
 	node, err := s.graph.AddNode(req.Uid, req.Label, kvs...)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("[AddNode] Error adding node: %v", err)
 	}
 
-	resp := pb.NodeResp{
+	resp = &pb.NodeResp{
 		Uid:        node.UID,
 		Label:      node.Label,
 		Properties: node.Properties,
@@ -29,27 +30,29 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq) (*pb.NodeResp, er
 		OutEdges:   node.OutEdges(),
 	}
 
-	return &resp, nil
+	return nil
 }
 
-func (s *server) RemoveNode(ctx context.Context, req *pb.UIDReq) (*pb.RemoveResp, error) {
-	var errmsg string
+func (s *server) RemoveNode(ctx context.Context, req *pb.UIDReq, resp *pb.RemoveResp) error {
+	resp = &pb.RemoveResp{Uid: req.Uid}
 
-	err := s.graph.RemoveNode(req.Uid)
-	if err != nil {
-		errmsg = err.Error()
+	if err := s.graph.RemoveNode(req.Uid); err != nil {
+		resp.Error = err.Error()
+		resp.Success = false
+		return fmt.Errorf("[RemoveNode] Error removing node: %v", err)
 	}
 
-	return &pb.RemoveResp{Uid: req.Uid, Success: err == nil, Error: errmsg}, nil
+	resp.Success = true // if we got to this point then everything was successful
+	return nil
 }
 
-func (s *server) Node(ctx context.Context, req *pb.UIDReq) (*pb.NodeResp, error) {
+func (s *server) Node(ctx context.Context, req *pb.UIDReq, resp *pb.NodeResp) error {
 	node, err := s.graph.Node(req.Uid)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("[Node] Error fetching node: %v", err)
 	}
 
-	resp := &pb.NodeResp{
+	resp = &pb.NodeResp{
 		Uid:        node.UID,
 		Label:      node.Label,
 		Properties: node.Properties,
@@ -57,10 +60,10 @@ func (s *server) Node(ctx context.Context, req *pb.UIDReq) (*pb.NodeResp, error)
 		OutEdges:   node.OutEdges(),
 	}
 
-	return resp, nil
+	return nil
 }
 
-func (s *server) Nodes(req *pb.NodesReq, stream pb.Graph_NodesServer) error {
+func (s *server) Nodes(ctx context.Context, req *pb.NodesReq, stream pb.Graph_NodesStream) error {
 	iter := s.graph.Nodes()
 	for iter.Next() {
 		node := iter.Value().(graph.Node)
@@ -74,7 +77,7 @@ func (s *server) Nodes(req *pb.NodesReq, stream pb.Graph_NodesServer) error {
 		}
 
 		if err := stream.Send(&resp); err != nil {
-			return nil
+			return fmt.Errorf("[Nodes] Error fetching and streaming nodes: %v", err)
 		}
 	}
 
