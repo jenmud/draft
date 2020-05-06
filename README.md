@@ -1,6 +1,6 @@
 # Draft
 
-Draft is is a simple, easy to use, and lightweight in memory graph store written in go.
+Draft is is a simple, easy to use, and lightweight micro service in memory graph store written in go.
 
 **Please note that this is still under development and not ready for production use!**
 **The API is not stable and updates may introduce breaking changes.**
@@ -9,17 +9,21 @@ Draft is is a simple, easy to use, and lightweight in memory graph store written
 
 ```bash
 # example with running with `go run`
-# assuming you are in cmd/server
+# assuming you are in cmd
 $ go run *.go
-2020/04/19 12:14:16 [run] Service accepting connections on [::]:8000
+2020-05-06 05:04:46  file=service.go:206 level=info Starting [service] draft.srv
+2020-05-06 05:04:46  file=grpc.go:845 level=info Server [grpc] Listening on [::]:40921
+2020-05-06 05:04:46  file=grpc.go:676 level=info Registry [mdns] Registering node: draft.srv-df0497ec-83c6-46f9-83ed-183d0e1801da
 ```
 
 
 ```bash
 # example with running with `go run`
-# assuming you are in cmd/server
-$ go run *.go -addr localhost:1234
-2020/04/19 12:14:16 [run] Service accepting connections on 127.0.0.1:1234
+# assuming you are in cmd
+$ go run *.go -addr :1234 -name example.draft.service.name
+2020-05-06 05:06:44  file=service.go:206 level=info Starting [service] example.draft.service.name
+2020-05-06 05:06:44  file=grpc.go:845 level=info Server [grpc] Listening on [::]:1234
+2020-05-06 05:06:44  file=grpc.go:676 level=info Registry [mdns] Registering node: example.draft.service.name-14b61530-fcd8-4e43-860b-b0f842298094
 ```
 
 ## Simple example client
