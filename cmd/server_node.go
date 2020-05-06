@@ -22,19 +22,17 @@ func (s *server) AddNode(ctx context.Context, req *pb.NodeReq, resp *pb.NodeResp
 		return fmt.Errorf("[AddNode] Error adding node: %v", err)
 	}
 
-	resp = &pb.NodeResp{
-		Uid:        node.UID,
-		Label:      node.Label,
-		Properties: node.Properties,
-		InEdges:    node.InEdges(),
-		OutEdges:   node.OutEdges(),
-	}
+	resp.Uid = node.UID
+	resp.Label = node.Label
+	resp.Properties = node.Properties
+	resp.InEdges = node.InEdges()
+	resp.OutEdges = node.OutEdges()
 
 	return nil
 }
 
 func (s *server) RemoveNode(ctx context.Context, req *pb.UIDReq, resp *pb.RemoveResp) error {
-	resp = &pb.RemoveResp{Uid: req.Uid}
+	resp.Uid = req.Uid
 
 	if err := s.graph.RemoveNode(req.Uid); err != nil {
 		resp.Error = err.Error()
@@ -52,13 +50,11 @@ func (s *server) Node(ctx context.Context, req *pb.UIDReq, resp *pb.NodeResp) er
 		return fmt.Errorf("[Node] Error fetching node: %v", err)
 	}
 
-	resp = &pb.NodeResp{
-		Uid:        node.UID,
-		Label:      node.Label,
-		Properties: node.Properties,
-		InEdges:    node.InEdges(),
-		OutEdges:   node.OutEdges(),
-	}
+	resp.Uid = node.UID
+	resp.Label = node.Label
+	resp.Properties = node.Properties
+	resp.InEdges = node.InEdges()
+	resp.OutEdges = node.OutEdges()
 
 	return nil
 }

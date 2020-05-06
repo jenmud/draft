@@ -22,19 +22,17 @@ func (s *server) AddEdge(ctx context.Context, req *pb.EdgeReq, resp *pb.EdgeResp
 		return fmt.Errorf("[AddEdge] Error adding edge: %v", err)
 	}
 
-	resp = &pb.EdgeResp{
-		Uid:        edge.UID,
-		SourceUid:  edge.SourceUID,
-		Label:      edge.Label,
-		TargetUid:  edge.TargetUID,
-		Properties: edge.Properties,
-	}
+	resp.Uid = edge.UID
+	resp.SourceUid = edge.SourceUID
+	resp.Label = edge.Label
+	resp.TargetUid = edge.TargetUID
+	resp.Properties = edge.Properties
 
 	return nil
 }
 
 func (s *server) RemoveEdge(ctx context.Context, req *pb.UIDReq, resp *pb.RemoveResp) error {
-	resp = &pb.RemoveResp{Uid: req.Uid}
+	resp.Uid = req.Uid
 
 	if err := s.graph.RemoveEdge(req.Uid); err != nil {
 		resp.Error = err.Error()
@@ -51,13 +49,11 @@ func (s *server) Edge(ctx context.Context, req *pb.UIDReq, resp *pb.EdgeResp) er
 		return fmt.Errorf("[Edge] Error fetching edge: %v", err)
 	}
 
-	resp = &pb.EdgeResp{
-		Uid:        edge.UID,
-		SourceUid:  edge.SourceUID,
-		Label:      edge.Label,
-		TargetUid:  edge.TargetUID,
-		Properties: edge.Properties,
-	}
+	resp.Uid = edge.UID
+	resp.SourceUid = edge.SourceUID
+	resp.Label = edge.Label
+	resp.TargetUid = edge.TargetUID
+	resp.Properties = edge.Properties
 
 	return nil
 }
