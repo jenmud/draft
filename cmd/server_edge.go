@@ -62,7 +62,7 @@ func (s *server) Edge(ctx context.Context, req *pb.UIDReq, resp *pb.EdgeResp) er
 	return nil
 }
 
-func (s *server) Edges(req *pb.EdgesReq, stream pb.Graph_EdgesStream) error {
+func (s *server) Edges(ctx context.Context, req *pb.EdgesReq, stream pb.Graph_EdgesStream) error {
 	iter := s.graph.Edges()
 	for iter.Next() {
 		edge := iter.Value().(graph.Edge)

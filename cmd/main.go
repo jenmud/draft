@@ -88,7 +88,7 @@ func run() error {
 	mservice := micro.NewService(name, version)
 	mservice.Init()
 
-	pb.RegisterGraphServer(mservice.Server(), &server{graph: store})
+	pb.RegisterGraphHandler(mservice.Server(), &server{graph: store})
 	return mservice.Run()
 
 	// c := make(chan os.Signal, 1)

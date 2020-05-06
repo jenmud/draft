@@ -63,7 +63,7 @@ func (s *server) Node(ctx context.Context, req *pb.UIDReq, resp *pb.NodeResp) er
 	return nil
 }
 
-func (s *server) Nodes(req *pb.NodesReq, stream pb.Graph_NodesStream) error {
+func (s *server) Nodes(ctx context.Context, req *pb.NodesReq, stream pb.Graph_NodesStream) error {
 	iter := s.graph.Nodes()
 	for iter.Next() {
 		node := iter.Value().(graph.Node)
