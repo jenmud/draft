@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/jenmud/draft/graph"
 	pb "github.com/jenmud/draft/service"
@@ -16,7 +17,6 @@ import (
 )
 
 var (
-	name    = micro.Name("draft.srv")
 	version = micro.Version("v0.0.0")
 	store   *graph.Graph
 	config  microConfig.Config
@@ -30,7 +30,9 @@ func parseArgs() {
 		log.Fatal(err)
 	}
 
-	flag.String("dump", "", "Load a dump (.draft) file.")
+	flag.String("addr", ":", "Address to accept client connections on")
+	flag.String("name", "draft.srv", "Service name")
+	flag.String("dump", "", "Load a dump (.draft) file")
 	flag.Parse()
 
 	err = config.Load(
@@ -68,6 +70,8 @@ func init() {
 
 // load a dump into the graph.
 func load(g *graph.Graph, dump pb.DumpResp) error {
+	start := time.Now()
+
 	for _, node := range dump.Nodes {
 		if _, err := g.AddNode(node.Uid, node.Label, convertServicePropsToGraphKVs(node.Properties)...); err != nil {
 			return fmt.Errorf("[load] %s", err)
@@ -80,13 +84,17 @@ func load(g *graph.Graph, dump pb.DumpResp) error {
 		}
 	}
 
+	log.Printf("Loaded %d nodes and %d edges in %s", g.NodeCount(), g.EdgeCount(), time.Now().Sub(start))
 	return nil
 }
 
 // run start the RPC service.
 func run() error {
-	mservice := micro.NewService(name, version)
-	mservice.Init()
+	mservice := micro.NewService(
+		version,
+		micro.Name(config.Get("name").String("draft.srv")),
+		micro.Address(config.Get("addr").String("0.0.0.0:")),
+	)
 
 	pb.RegisterGraphHandler(mservice.Server(), &server{graph: store})
 	return mservice.Run()
