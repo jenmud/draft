@@ -29,16 +29,12 @@ type server struct {
 
 func (s *server) Stats(ctx context.Context, req *pb.StatsReq, resp *pb.StatsResp) error {
 	stats := s.graph.Stats()
-
-	resp = &pb.StatsResp{
-		NumCpu:           int32(stats.NumCPU),
-		NodeCount:        int32(stats.NodeCount),
-		EdgeCount:        int32(stats.EdgeCount),
-		StartTime:        stats.StartTime.String(),
-		NumGoroutines:    int32(stats.NumGoroutings),
-		TotalMemoryAlloc: int32(stats.MemStats.TotalAlloc),
-	}
-
+	resp.NumCpu = int32(stats.NumCPU)
+	resp.NodeCount = int32(stats.NodeCount)
+	resp.EdgeCount = int32(stats.EdgeCount)
+	resp.StartTime = stats.StartTime.String()
+	resp.NumGoroutines = int32(stats.NumGoroutings)
+	resp.TotalMemoryAlloc = int32(stats.MemStats.TotalAlloc)
 	return nil
 }
 
@@ -58,45 +54,43 @@ func (s *server) Save(w io.Writer) error {
 	return err
 }
 
-func dump(g *graph.Graph) (*pb.DumpResp, error) {
+func dump(g *graph.Graph, resp *pb.DumpResp) error {
 	// TODO: add in the subgraph and levels
 	nodesIter := g.Nodes()
 	edgesIter := g.Edges()
 
-	dump := &pb.DumpResp{
-		Nodes: make([]*pb.NodeResp, nodesIter.Size()),
-		Edges: make([]*pb.EdgeResp, edgesIter.Size()),
-	}
+	resp.Nodes = make([]*pb.NodeResp, nodesIter.Size())
+	resp.Edges = make([]*pb.EdgeResp, edgesIter.Size())
 
 	ncount := 0
 	for nodesIter.Next() {
 		node := nodesIter.Value().(graph.Node)
-		resp := &pb.NodeResp{
+		nresp := &pb.NodeResp{
 			Uid:        node.UID,
 			Label:      node.Label,
 			Properties: node.Properties,
 			InEdges:    node.InEdges(),
 			OutEdges:   node.OutEdges(),
 		}
-		dump.Nodes[ncount] = resp
+		resp.Nodes[ncount] = nresp
 		ncount++
 	}
 
 	ecount := 0
 	for edgesIter.Next() {
 		edge := edgesIter.Value().(graph.Edge)
-		resp := &pb.EdgeResp{
+		eresp := &pb.EdgeResp{
 			Uid:        edge.UID,
 			SourceUid:  edge.SourceUID,
 			Label:      edge.Label,
 			TargetUid:  edge.TargetUID,
 			Properties: edge.Properties,
 		}
-		dump.Edges[ecount] = resp
+		resp.Edges[ecount] = eresp
 		ecount++
 	}
 
-	return dump, nil
+	return nil
 }
 
 func (s *server) Query(ctx context.Context, req *pb.QueryReq, resp *pb.DumpResp) error {
@@ -105,17 +99,18 @@ func (s *server) Query(ctx context.Context, req *pb.QueryReq, resp *pb.DumpResp)
 		return fmt.Errorf("[Query] Error trying to execute a query: %v", err)
 	}
 
-	response, err := dump(g)
-	resp = response
-	return fmt.Errorf("[Query] Error trying to dump query response: %v", err)
+	if err := dump(g, resp); err != nil {
+		return fmt.Errorf("[Query] Error trying to dump query response: %v", err)
+	}
+
+	return nil
 }
 
 func (s *server) Dump(ctx context.Context, req *pb.DumpReq, resp *pb.DumpResp) error {
-	response, err := dump(s.graph)
-	if err != nil {
+	if err := dump(s.graph, resp); err != nil {
 		return fmt.Errorf("[Dump] Error trying to dump the graph: %v", err)
 	}
-	resp = response
+
 	return nil
 }
 
