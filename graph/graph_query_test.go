@@ -23,6 +23,11 @@ func TestQuery(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Add in some extra nodes to make the testing below easier
+	g.AddNode("node-flower", "flower")
+	g.AddNode("node-flower-rose", "flower", KV{Key: "name", Value: []byte("rose")})
+	g.AddNode("node-car", "car")
+
 	tests := []TestCase{
 		TestCase{
 			g:     g,
@@ -30,37 +35,112 @@ func TestQuery(t *testing.T) {
 			Query: `MATCH (n) RETURN n`,
 			Expected: []Node{
 				Node{
+					UID:        "node-car",
+					Label:      "car",
+					Properties: map[string][]byte{},
+					inEdges:    map[string]struct{}{},
+					outEdges:   map[string]struct{}{},
+				},
+				Node{
+					UID:        "node-flower",
+					Label:      "flower",
+					Properties: map[string][]byte{},
+					inEdges:    map[string]struct{}{},
+					outEdges:   map[string]struct{}{},
+				},
+				Node{
+					UID:        "node-flower-rose",
+					Label:      "flower",
+					Properties: map[string][]byte{"name": []byte("rose")},
+					inEdges:    map[string]struct{}{},
+					outEdges:   map[string]struct{}{},
+				},
+				Node{
 					UID:        "node-foo",
 					Label:      "person",
 					Properties: map[string][]byte{"name": []byte("foo")},
 					inEdges:    map[string]struct{}{},
-					outEdges:   map[string]struct{}{},
+					outEdges: map[string]struct{}{
+						"edge-like":  {},
+						"edge-knows": {},
+						"edge-owns":  {},
+					},
+				},
+				Node{
+					UID:        "node-bar",
+					Label:      "person",
+					Properties: map[string][]byte{"name": []byte("bar")},
+					inEdges: map[string]struct{}{
+						"edge-like":  {},
+						"edge-knows": {},
+					},
+					outEdges: map[string]struct{}{
+						"edge-dislike": {},
+					},
+				},
+				Node{
+					UID:        "node-dog",
+					Label:      "animal",
+					Properties: map[string][]byte{"name": []byte("socks")},
+					inEdges: map[string]struct{}{
+						"edge-owns":    {},
+						"edge-dislike": {},
+					},
+					outEdges: map[string]struct{}{},
+				},
+			},
+		},
+		TestCase{
+			g:     g,
+			Name:  "EdgesAndEdgeNodesIncluded",
+			Query: `MATCH (n {name: "socks"}) RETURN n`,
+			Expected: []Node{
+				Node{
+					UID:        "node-foo",
+					Label:      "person",
+					Properties: map[string][]byte{"name": []byte("foo")},
+					inEdges:    map[string]struct{}{},
+					outEdges: map[string]struct{}{
+						"edge-owns": {},
+					},
 				},
 				Node{
 					UID:        "node-bar",
 					Label:      "person",
 					Properties: map[string][]byte{"name": []byte("bar")},
 					inEdges:    map[string]struct{}{},
-					outEdges:   map[string]struct{}{},
+					outEdges: map[string]struct{}{
+						"edge-dislike": {},
+					},
 				},
 				Node{
 					UID:        "node-dog",
 					Label:      "animal",
 					Properties: map[string][]byte{"name": []byte("socks")},
-					inEdges:    map[string]struct{}{},
-					outEdges:   map[string]struct{}{},
+					inEdges: map[string]struct{}{
+						"edge-owns":    {},
+						"edge-dislike": {},
+					},
+					outEdges: map[string]struct{}{},
 				},
 			},
 		},
 		TestCase{
 			g:     g,
-			Name:  "OnlyShouldContainAnimalNodes",
-			Query: `MATCH (n:animal) RETURN n`,
+			Name:  "OnlyShouldContainFlowerNodes",
+			Query: `MATCH (n:flower) RETURN n`,
 			Expected: []Node{
 				Node{
-					UID:        "node-dog",
-					Label:      "animal",
-					Properties: map[string][]byte{"name": []byte("socks")},
+					UID:        "node-flower",
+					Label:      "flower",
+					Properties: map[string][]byte{},
+					inEdges:    map[string]struct{}{},
+					outEdges:   map[string]struct{}{},
+				},
+				Node{
+					UID:        "node-flower-rose",
+					Label:      "flower",
+					Properties: map[string][]byte{"name": []byte("rose")},
 					inEdges:    map[string]struct{}{},
 					outEdges:   map[string]struct{}{},
 				},
@@ -70,28 +150,28 @@ func TestQuery(t *testing.T) {
 			g:    g,
 			Name: "MultiMatchByLabel",
 			Query: `
-			MATCH (n:animal)
-			MATCH (m:person)
+			MATCH (n:car)
+			MATCH (m:flower)
 			RETURN n, m`,
 			Expected: []Node{
 				Node{
-					UID:        "node-foo",
-					Label:      "person",
-					Properties: map[string][]byte{"name": []byte("foo")},
+					UID:        "node-flower",
+					Label:      "flower",
+					Properties: map[string][]byte{},
 					inEdges:    map[string]struct{}{},
 					outEdges:   map[string]struct{}{},
 				},
 				Node{
-					UID:        "node-bar",
-					Label:      "person",
-					Properties: map[string][]byte{"name": []byte("bar")},
+					UID:        "node-flower-rose",
+					Label:      "flower",
+					Properties: map[string][]byte{"name": []byte("rose")},
 					inEdges:    map[string]struct{}{},
 					outEdges:   map[string]struct{}{},
 				},
 				Node{
-					UID:        "node-dog",
-					Label:      "animal",
-					Properties: map[string][]byte{"name": []byte("socks")},
+					UID:        "node-car",
+					Label:      "car",
+					Properties: map[string][]byte{},
 					inEdges:    map[string]struct{}{},
 					outEdges:   map[string]struct{}{},
 				},
@@ -101,21 +181,21 @@ func TestQuery(t *testing.T) {
 			g:    g,
 			Name: "MultiMatchByLabelAndProperty",
 			Query: `
-			MATCH (n:person {name: "bar"})
-			MATCH (m:animal)
+			MATCH (n:flower {name: "rose"})
+			MATCH (m:car)
 			RETURN n, m`,
 			Expected: []Node{
 				Node{
-					UID:        "node-bar",
-					Label:      "person",
-					Properties: map[string][]byte{"name": []byte("bar")},
+					UID:        "node-flower-rose",
+					Label:      "flower",
+					Properties: map[string][]byte{"name": []byte("rose")},
 					inEdges:    map[string]struct{}{},
 					outEdges:   map[string]struct{}{},
 				},
 				Node{
-					UID:        "node-dog",
-					Label:      "animal",
-					Properties: map[string][]byte{"name": []byte("socks")},
+					UID:        "node-car",
+					Label:      "car",
+					Properties: map[string][]byte{},
 					inEdges:    map[string]struct{}{},
 					outEdges:   map[string]struct{}{},
 				},
@@ -148,7 +228,7 @@ func TestQuery(t *testing.T) {
 			count++
 		}
 
-		assert.ElementsMatch(t, test.Expected, actual, "%s expected %v but got %v", test.Name, test.Expected, actual)
+		assert.ElementsMatch(t, test.Expected, actual, "%s expected %#v but got %#v", test.Name, test.Expected, actual)
 	}
 
 }
