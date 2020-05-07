@@ -443,10 +443,16 @@ func (x *RemoveResp) GetSuccess() bool {
 }
 
 // NodesReq used for returning all the nodes in the graph.
+// Omitting the label or properties will return everything.
+// Use Label to filter for nodes matching a label.
+// Use Properties to filter for nodes containing a property.
 type NodesReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Label      []string          `protobuf:"bytes,1,rep,name=label,proto3" json:"label,omitempty"`
+	Properties map[string][]byte `protobuf:"bytes,2,rep,name=properties,proto3" json:"properties,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *NodesReq) Reset() {
@@ -481,11 +487,33 @@ func (*NodesReq) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{6}
 }
 
+func (x *NodesReq) GetLabel() []string {
+	if x != nil {
+		return x.Label
+	}
+	return nil
+}
+
+func (x *NodesReq) GetProperties() map[string][]byte {
+	if x != nil {
+		return x.Properties
+	}
+	return nil
+}
+
 // EdgesReq used for returning all the edges in the graph.
+// Omitting the label or properties will return everything.
+// Use Label to filter for nodes matching a label.
+// Use Properties to filter for nodes containing a property.
 type EdgesReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	SourceUid  string            `protobuf:"bytes,1,opt,name=source_uid,json=sourceUid,proto3" json:"source_uid,omitempty"`
+	Label      []string          `protobuf:"bytes,2,rep,name=label,proto3" json:"label,omitempty"`
+	TargetUid  string            `protobuf:"bytes,3,opt,name=target_uid,json=targetUid,proto3" json:"target_uid,omitempty"`
+	Properties map[string][]byte `protobuf:"bytes,4,rep,name=properties,proto3" json:"properties,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *EdgesReq) Reset() {
@@ -518,6 +546,34 @@ func (x *EdgesReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use EdgesReq.ProtoReflect.Descriptor instead.
 func (*EdgesReq) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *EdgesReq) GetSourceUid() string {
+	if x != nil {
+		return x.SourceUid
+	}
+	return ""
+}
+
+func (x *EdgesReq) GetLabel() []string {
+	if x != nil {
+		return x.Label
+	}
+	return nil
+}
+
+func (x *EdgesReq) GetTargetUid() string {
+	if x != nil {
+		return x.TargetUid
+	}
+	return ""
+}
+
+func (x *EdgesReq) GetProperties() map[string][]byte {
+	if x != nil {
+		return x.Properties
+	}
+	return nil
 }
 
 // DumpReq is a request to producting a graph dump.
@@ -880,8 +936,30 @@ var file_service_proto_rawDesc = []byte{
 	0x28, 0x09, 0x52, 0x03, 0x75, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x12, 0x18, 0x0a,
 	0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07,
-	0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x0a, 0x0a, 0x08, 0x4e, 0x6f, 0x64, 0x65, 0x73,
-	0x52, 0x65, 0x71, 0x22, 0x0a, 0x0a, 0x08, 0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65, 0x71, 0x22,
+	0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x9a, 0x01, 0x0a, 0x08, 0x4e, 0x6f, 0x64, 0x65,
+	0x73, 0x52, 0x65, 0x71, 0x12, 0x14, 0x0a, 0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x12, 0x39, 0x0a, 0x0a, 0x70, 0x72,
+	0x6f, 0x70, 0x65, 0x72, 0x74, 0x69, 0x65, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19,
+	0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x73, 0x52, 0x65, 0x71, 0x2e, 0x50, 0x72, 0x6f, 0x70, 0x65, 0x72,
+	0x74, 0x69, 0x65, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x70, 0x65,
+	0x72, 0x74, 0x69, 0x65, 0x73, 0x1a, 0x3d, 0x0a, 0x0f, 0x50, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74,
+	0x69, 0x65, 0x73, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61,
+	0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65,
+	0x3a, 0x02, 0x38, 0x01, 0x22, 0xd8, 0x01, 0x0a, 0x08, 0x45, 0x64, 0x67, 0x65, 0x73, 0x52, 0x65,
+	0x71, 0x12, 0x1d, 0x0a, 0x0a, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x5f, 0x75, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x55, 0x69, 0x64,
+	0x12, 0x14, 0x0a, 0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52,
+	0x05, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x12, 0x1d, 0x0a, 0x0a, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74,
+	0x5f, 0x75, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x74, 0x61, 0x72, 0x67,
+	0x65, 0x74, 0x55, 0x69, 0x64, 0x12, 0x39, 0x0a, 0x0a, 0x70, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74,
+	0x69, 0x65, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x45, 0x64, 0x67, 0x65,
+	0x73, 0x52, 0x65, 0x71, 0x2e, 0x50, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x69, 0x65, 0x73, 0x45,
+	0x6e, 0x74, 0x72, 0x79, 0x52, 0x0a, 0x70, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x69, 0x65, 0x73,
+	0x1a, 0x3d, 0x0a, 0x0f, 0x50, 0x72, 0x6f, 0x70, 0x65, 0x72, 0x74, 0x69, 0x65, 0x73, 0x45, 0x6e,
+	0x74, 0x72, 0x79, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x3a, 0x02, 0x38, 0x01, 0x22,
 	0x3c, 0x0a, 0x07, 0x44, 0x75, 0x6d, 0x70, 0x52, 0x65, 0x71, 0x12, 0x19, 0x0a, 0x08, 0x6e, 0x6f,
 	0x64, 0x65, 0x5f, 0x75, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6e, 0x6f,
 	0x64, 0x65, 0x55, 0x69, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x6c, 0x65, 0x76, 0x65, 0x6c, 0x73, 0x18,
@@ -945,7 +1023,7 @@ func file_service_proto_rawDescGZIP() []byte {
 	return file_service_proto_rawDescData
 }
 
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_service_proto_goTypes = []interface{}{
 	(*UIDReq)(nil),     // 0: UIDReq
 	(*NodeReq)(nil),    // 1: NodeReq
@@ -964,41 +1042,45 @@ var file_service_proto_goTypes = []interface{}{
 	nil,                // 14: NodeResp.PropertiesEntry
 	nil,                // 15: EdgeReq.PropertiesEntry
 	nil,                // 16: EdgeResp.PropertiesEntry
+	nil,                // 17: NodesReq.PropertiesEntry
+	nil,                // 18: EdgesReq.PropertiesEntry
 }
 var file_service_proto_depIdxs = []int32{
 	13, // 0: NodeReq.properties:type_name -> NodeReq.PropertiesEntry
 	14, // 1: NodeResp.properties:type_name -> NodeResp.PropertiesEntry
 	15, // 2: EdgeReq.properties:type_name -> EdgeReq.PropertiesEntry
 	16, // 3: EdgeResp.properties:type_name -> EdgeResp.PropertiesEntry
-	2,  // 4: DumpResp.nodes:type_name -> NodeResp
-	4,  // 5: DumpResp.edges:type_name -> EdgeResp
-	1,  // 6: Graph.AddNode:input_type -> NodeReq
-	0,  // 7: Graph.RemoveNode:input_type -> UIDReq
-	0,  // 8: Graph.Node:input_type -> UIDReq
-	6,  // 9: Graph.Nodes:input_type -> NodesReq
-	3,  // 10: Graph.AddEdge:input_type -> EdgeReq
-	0,  // 11: Graph.RemoveEdge:input_type -> UIDReq
-	0,  // 12: Graph.Edge:input_type -> UIDReq
-	7,  // 13: Graph.Edges:input_type -> EdgesReq
-	10, // 14: Graph.Stats:input_type -> StatsReq
-	12, // 15: Graph.Query:input_type -> QueryReq
-	8,  // 16: Graph.Dump:input_type -> DumpReq
-	2,  // 17: Graph.AddNode:output_type -> NodeResp
-	5,  // 18: Graph.RemoveNode:output_type -> RemoveResp
-	2,  // 19: Graph.Node:output_type -> NodeResp
-	2,  // 20: Graph.Nodes:output_type -> NodeResp
-	4,  // 21: Graph.AddEdge:output_type -> EdgeResp
-	5,  // 22: Graph.RemoveEdge:output_type -> RemoveResp
-	4,  // 23: Graph.Edge:output_type -> EdgeResp
-	4,  // 24: Graph.Edges:output_type -> EdgeResp
-	11, // 25: Graph.Stats:output_type -> StatsResp
-	9,  // 26: Graph.Query:output_type -> DumpResp
-	9,  // 27: Graph.Dump:output_type -> DumpResp
-	17, // [17:28] is the sub-list for method output_type
-	6,  // [6:17] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	17, // 4: NodesReq.properties:type_name -> NodesReq.PropertiesEntry
+	18, // 5: EdgesReq.properties:type_name -> EdgesReq.PropertiesEntry
+	2,  // 6: DumpResp.nodes:type_name -> NodeResp
+	4,  // 7: DumpResp.edges:type_name -> EdgeResp
+	1,  // 8: Graph.AddNode:input_type -> NodeReq
+	0,  // 9: Graph.RemoveNode:input_type -> UIDReq
+	0,  // 10: Graph.Node:input_type -> UIDReq
+	6,  // 11: Graph.Nodes:input_type -> NodesReq
+	3,  // 12: Graph.AddEdge:input_type -> EdgeReq
+	0,  // 13: Graph.RemoveEdge:input_type -> UIDReq
+	0,  // 14: Graph.Edge:input_type -> UIDReq
+	7,  // 15: Graph.Edges:input_type -> EdgesReq
+	10, // 16: Graph.Stats:input_type -> StatsReq
+	12, // 17: Graph.Query:input_type -> QueryReq
+	8,  // 18: Graph.Dump:input_type -> DumpReq
+	2,  // 19: Graph.AddNode:output_type -> NodeResp
+	5,  // 20: Graph.RemoveNode:output_type -> RemoveResp
+	2,  // 21: Graph.Node:output_type -> NodeResp
+	2,  // 22: Graph.Nodes:output_type -> NodeResp
+	4,  // 23: Graph.AddEdge:output_type -> EdgeResp
+	5,  // 24: Graph.RemoveEdge:output_type -> RemoveResp
+	4,  // 25: Graph.Edge:output_type -> EdgeResp
+	4,  // 26: Graph.Edges:output_type -> EdgeResp
+	11, // 27: Graph.Stats:output_type -> StatsResp
+	9,  // 28: Graph.Query:output_type -> DumpResp
+	9,  // 29: Graph.Dump:output_type -> DumpResp
+	19, // [19:30] is the sub-list for method output_type
+	8,  // [8:19] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_service_proto_init() }
@@ -1170,7 +1252,7 @@ func file_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

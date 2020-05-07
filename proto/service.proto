@@ -50,10 +50,24 @@ message RemoveResp {
 }
 
 // NodesReq used for returning all the nodes in the graph.
-message NodesReq {}
+// Omitting the label or properties will return everything.
+// Use Label to filter for nodes matching a label.
+// Use Properties to filter for nodes containing a property.
+message NodesReq {
+    repeated string label = 1;
+    map<string, bytes> properties = 2;
+}
 
 // EdgesReq used for returning all the edges in the graph.
-message EdgesReq {}
+// Omitting the label or properties will return everything.
+// Use Label to filter for nodes matching a label.
+// Use Properties to filter for nodes containing a property.
+message EdgesReq {
+    string source_uid = 1;
+    repeated string label = 2;
+    string target_uid = 3;
+    map<string, bytes> properties = 4;
+}
 
 // DumpReq is a request to producting a graph dump.
 message DumpReq {
