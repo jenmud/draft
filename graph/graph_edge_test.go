@@ -212,3 +212,190 @@ func TestEdgeCount(t *testing.T) {
 
 	assert.Equal(t, 3, g.EdgeCount())
 }
+
+func TestEdgesBy__label(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	e1, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID)
+	e2, _ := g.AddEdge("edge-2345", n1.UID, "likes", n2.UID)
+	e3, _ := g.AddEdge("edge-3456", n1.UID, "knows", n2.UID)
+
+	expected := []Edge{e2}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("", []string{"likes"}, "", map[string][]byte{})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+
+	expected = []Edge{e1, e2, e3}
+	actual = []Edge{}
+
+	iter = g.EdgesBy("", []string{"likes", "knows"}, "", map[string][]byte{})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestEdgesBy__Properties(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	e1, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	g.AddEdge("edge-2345", n1.UID, "likes", n2.UID, KV{Key: "like-a", Value: []byte("friend")})
+	g.AddEdge("edge-3456", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("childhood")})
+
+	expected := []Edge{e1}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("", []string{}, "", map[string][]byte{"since": []byte("school")})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestEdgesBy__source(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	e1, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	e2, _ := g.AddEdge("edge-2345", n1.UID, "likes", n2.UID, KV{Key: "like-a", Value: []byte("friend")})
+	g.AddEdge("edge-3456", n2.UID, "knows", n1.UID, KV{Key: "since", Value: []byte("childhood")})
+
+	expected := []Edge{e1, e2}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("node-1", []string{}, "", map[string][]byte{})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestEdgesBy__target(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	g.AddEdge("edge-2345", n1.UID, "likes", n2.UID, KV{Key: "like-a", Value: []byte("friend")})
+	e3, _ := g.AddEdge("edge-3456", n2.UID, "knows", n1.UID, KV{Key: "since", Value: []byte("childhood")})
+
+	expected := []Edge{e3}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("", []string{}, "node-1", map[string][]byte{})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestEdgesBy__source_target(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	g.AddEdge("edge-2345", n1.UID, "likes", n2.UID, KV{Key: "like-a", Value: []byte("friend")})
+	e3, _ := g.AddEdge("edge-3456", n1.UID, "knows", n1.UID, KV{Key: "since", Value: []byte("childhood")})
+
+	expected := []Edge{e3}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("node-1", []string{}, "node-1", map[string][]byte{})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestEdgesBy__source_label(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	e2, _ := g.AddEdge("edge-2345", n1.UID, "likes", n2.UID, KV{Key: "like-a", Value: []byte("friend")})
+	g.AddEdge("edge-3456", n1.UID, "knows", n1.UID, KV{Key: "since", Value: []byte("childhood")})
+
+	expected := []Edge{e2}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("node-1", []string{"likes"}, "", map[string][]byte{})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestEdgesBy__target_label(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	e2, _ := g.AddEdge("edge-2345", n1.UID, "likes", n2.UID, KV{Key: "like-a", Value: []byte("friend")})
+	g.AddEdge("edge-3456", n1.UID, "knows", n1.UID, KV{Key: "since", Value: []byte("childhood")})
+
+	expected := []Edge{e2}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("", []string{"likes"}, "node-2", map[string][]byte{})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}
+
+func TestEdgesBy__source_property(t *testing.T) {
+	g := New()
+
+	n1, _ := g.AddNode("node-1", "person")
+	n2, _ := g.AddNode("node-2", "person")
+
+	e1, _ := g.AddEdge("edge-1234", n1.UID, "knows", n2.UID, KV{Key: "since", Value: []byte("school")})
+	g.AddEdge("edge-2345", n1.UID, "likes", n2.UID, KV{Key: "like-a", Value: []byte("friend")})
+	g.AddEdge("edge-3456", n1.UID, "knows", n1.UID, KV{Key: "since", Value: []byte("childhood")})
+
+	expected := []Edge{e1}
+	actual := []Edge{}
+
+	iter := g.EdgesBy("node-1", []string{}, "", map[string][]byte{"since": []byte("school")})
+	for iter.Next() {
+		edge := iter.Value().(Edge)
+		actual = append(actual, edge)
+	}
+
+	assert.ElementsMatch(t, expected, actual)
+}

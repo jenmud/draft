@@ -173,6 +173,11 @@ func edgeSourceTargetReducer(source, target string, in <-chan Edge, out chan<- E
 			out <- edge
 			continue
 		}
+
+		if source == edge.SourceUID && target == edge.TargetUID {
+			out <- edge
+			continue
+		}
 	}
 
 	close(out)
