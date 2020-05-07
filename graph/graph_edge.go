@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/jenmud/draft/graph/iterator"
@@ -119,6 +120,116 @@ func (g *Graph) Edges() Iterator {
 	for _, edge := range g.edges {
 		edges[count] = edge
 		count++
+	}
+
+	return iterator.New(edges)
+}
+
+// edgeMapper converts interfaces into Edges
+func edgeMapper(in <-chan interface{}, out chan<- Edge) {
+	for item := range in {
+		out <- item.(Edge)
+	}
+	close(out)
+}
+
+// edgeLabelReducer filters for edges that have the given labels.
+func edgeLabelReducer(labels []string, in <-chan Edge, out chan<- Edge) {
+	for edge := range in {
+		if len(labels) == 0 {
+			out <- edge
+			continue
+		}
+
+		for _, label := range labels {
+			if edge.Label == label {
+				out <- edge
+				continue
+			}
+		}
+	}
+
+	close(out)
+}
+
+// edgeSourceTargetReducer filters for edges that have the given source or target uids.
+// If source or target is empty, then all edges will be returned.
+func edgeSourceTargetReducer(source, target string, in <-chan Edge, out chan<- Edge) {
+	for edge := range in {
+		// if there is no source or target add the edge
+		if source == "" && target == "" {
+			out <- edge
+			continue
+		}
+
+		// if there is a source and not target, then only filter on source
+		if target == "" && source == edge.SourceUID {
+			out <- edge
+			continue
+		}
+
+		// if there is a target and not source, then only filter on target
+		if source == "" && target == edge.TargetUID {
+			out <- edge
+			continue
+		}
+	}
+
+	close(out)
+}
+
+// edgePropReducer filters for edges that have the given properties.
+func edgePropReducer(props map[string][]byte, in <-chan Edge, out chan<- Edge) {
+	for edge := range in {
+		if len(props) == 0 {
+			out <- edge
+			continue
+		}
+
+		var allMatched = false
+		for key, value := range props {
+			nvalue, ok := edge.Properties[key]
+			if !ok {
+				allMatched = false
+				break
+			}
+
+			if !bytes.Equal(value, nvalue) {
+				allMatched = false
+				break
+			}
+
+			allMatched = true
+		}
+
+		if allMatched {
+			out <- edge
+		}
+	}
+
+	close(out)
+}
+
+// EdgesBy returns a edge iterator with filtered edges.
+// If labels is an empty list, then any label will be used.
+// If props is an empty map, no properties will be used for filtering.
+func (g *Graph) EdgesBy(source string, labels []string, target string, props map[string][]byte) Iterator {
+	g.lock.RLock()
+	defer g.lock.RUnlock()
+
+	in := make(chan Edge, len(g.edges))
+	labelFiltered := make(chan Edge, len(g.edges))
+	sourceTargetFiltered := make(chan Edge, len(g.edges))
+	final := make(chan Edge)
+
+	go edgeMapper(g.Edges().Channel(), in)
+	go edgeLabelReducer(labels, in, labelFiltered)
+	go edgeSourceTargetReducer(source, target, labelFiltered, sourceTargetFiltered)
+	go edgePropReducer(props, sourceTargetFiltered, final)
+
+	edges := []interface{}{}
+	for edge := range final {
+		edges = append(edges, edge)
 	}
 
 	return iterator.New(edges)

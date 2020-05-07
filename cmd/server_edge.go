@@ -59,7 +59,7 @@ func (s *server) Edge(ctx context.Context, req *pb.UIDReq, resp *pb.EdgeResp) er
 }
 
 func (s *server) Edges(ctx context.Context, req *pb.EdgesReq, stream pb.Graph_EdgesStream) error {
-	iter := s.graph.Edges()
+	iter := s.graph.EdgesBy(req.SourceUid, req.Label, req.TargetUid, req.Properties)
 	for iter.Next() {
 		edge := iter.Value().(graph.Edge)
 
