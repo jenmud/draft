@@ -1,4 +1,4 @@
-all: gen-go-proto gen-cypher
+all: test
 
 gen-go-proto:
 	protoc --proto_path=./proto --micro_out=./service --go_out=./service service.proto

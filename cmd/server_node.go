@@ -44,12 +44,29 @@ func (s *server) RemoveNode(ctx context.Context, req *pb.UIDReq, resp *pb.Remove
 	return nil
 }
 
-func (s *server) Node(ctx context.Context, req *pb.UIDReq, resp *pb.NodeResp) error {
-	node, err := s.graph.Node(req.Uid)
-	if err != nil {
-		return fmt.Errorf("[Node] Error fetching node: %v", err)
+func (s *server) Node(ctx context.Context, req *pb.NodeReq, resp *pb.NodeResp) error {
+	// if we have a uid in the node request, then just use that.
+	if req.Uid != "" {
+		node, err := s.graph.Node(req.Uid)
+		if err != nil {
+			return fmt.Errorf("[Node] Error fetching node: %v", err)
+		}
+
+		resp.Uid = node.UID
+		resp.Label = node.Label
+		resp.Properties = node.Properties
+		resp.InEdges = node.InEdges()
+		resp.OutEdges = node.OutEdges()
+		return nil
 	}
 
+	// if we don't have a Uid do a filter for labels and properties.
+	iter := s.graph.NodesBy([]string{req.Label}, req.Properties)
+	if iter.Size() != 1 {
+		return fmt.Errorf("[Node] Error fetching node, expected 1 but found %d", iter.Size())
+	}
+
+	node := iter.Value().(graph.Node)
 	resp.Uid = node.UID
 	resp.Label = node.Label
 	resp.Properties = node.Properties

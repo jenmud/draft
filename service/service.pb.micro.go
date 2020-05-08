@@ -47,7 +47,7 @@ type GraphService interface {
 	// RemoveNode remove a node from the graph.
 	RemoveNode(ctx context.Context, in *UIDReq, opts ...client.CallOption) (*RemoveResp, error)
 	// Node returns the node if found.
-	Node(ctx context.Context, in *UIDReq, opts ...client.CallOption) (*NodeResp, error)
+	Node(ctx context.Context, in *NodeReq, opts ...client.CallOption) (*NodeResp, error)
 	// Nodes returns all the node in the graph.
 	Nodes(ctx context.Context, in *NodesReq, opts ...client.CallOption) (Graph_NodesService, error)
 	// AddEdge adds a edge to the graph.
@@ -55,7 +55,7 @@ type GraphService interface {
 	// RemoveEdge remove a edge from the graph.
 	RemoveEdge(ctx context.Context, in *UIDReq, opts ...client.CallOption) (*RemoveResp, error)
 	// Edge returns the edge if found.
-	Edge(ctx context.Context, in *UIDReq, opts ...client.CallOption) (*EdgeResp, error)
+	Edge(ctx context.Context, in *EdgeReq, opts ...client.CallOption) (*EdgeResp, error)
 	// Edges returns all the edges in the graph.
 	Edges(ctx context.Context, in *EdgesReq, opts ...client.CallOption) (Graph_EdgesService, error)
 	// Stats returns some stats about the service.
@@ -99,7 +99,7 @@ func (c *graphService) RemoveNode(ctx context.Context, in *UIDReq, opts ...clien
 	return out, nil
 }
 
-func (c *graphService) Node(ctx context.Context, in *UIDReq, opts ...client.CallOption) (*NodeResp, error) {
+func (c *graphService) Node(ctx context.Context, in *NodeReq, opts ...client.CallOption) (*NodeResp, error) {
 	req := c.c.NewRequest(c.name, "Graph.Node", in)
 	out := new(NodeResp)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -178,7 +178,7 @@ func (c *graphService) RemoveEdge(ctx context.Context, in *UIDReq, opts ...clien
 	return out, nil
 }
 
-func (c *graphService) Edge(ctx context.Context, in *UIDReq, opts ...client.CallOption) (*EdgeResp, error) {
+func (c *graphService) Edge(ctx context.Context, in *EdgeReq, opts ...client.CallOption) (*EdgeResp, error) {
 	req := c.c.NewRequest(c.name, "Graph.Edge", in)
 	out := new(EdgeResp)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -275,7 +275,7 @@ type GraphHandler interface {
 	// RemoveNode remove a node from the graph.
 	RemoveNode(context.Context, *UIDReq, *RemoveResp) error
 	// Node returns the node if found.
-	Node(context.Context, *UIDReq, *NodeResp) error
+	Node(context.Context, *NodeReq, *NodeResp) error
 	// Nodes returns all the node in the graph.
 	Nodes(context.Context, *NodesReq, Graph_NodesStream) error
 	// AddEdge adds a edge to the graph.
@@ -283,7 +283,7 @@ type GraphHandler interface {
 	// RemoveEdge remove a edge from the graph.
 	RemoveEdge(context.Context, *UIDReq, *RemoveResp) error
 	// Edge returns the edge if found.
-	Edge(context.Context, *UIDReq, *EdgeResp) error
+	Edge(context.Context, *EdgeReq, *EdgeResp) error
 	// Edges returns all the edges in the graph.
 	Edges(context.Context, *EdgesReq, Graph_EdgesStream) error
 	// Stats returns some stats about the service.
@@ -299,11 +299,11 @@ func RegisterGraphHandler(s server.Server, hdlr GraphHandler, opts ...server.Han
 	type graph interface {
 		AddNode(ctx context.Context, in *NodeReq, out *NodeResp) error
 		RemoveNode(ctx context.Context, in *UIDReq, out *RemoveResp) error
-		Node(ctx context.Context, in *UIDReq, out *NodeResp) error
+		Node(ctx context.Context, in *NodeReq, out *NodeResp) error
 		Nodes(ctx context.Context, stream server.Stream) error
 		AddEdge(ctx context.Context, in *EdgeReq, out *EdgeResp) error
 		RemoveEdge(ctx context.Context, in *UIDReq, out *RemoveResp) error
-		Edge(ctx context.Context, in *UIDReq, out *EdgeResp) error
+		Edge(ctx context.Context, in *EdgeReq, out *EdgeResp) error
 		Edges(ctx context.Context, stream server.Stream) error
 		Stats(ctx context.Context, in *StatsReq, out *StatsResp) error
 		Query(ctx context.Context, in *QueryReq, out *DumpResp) error
@@ -328,7 +328,7 @@ func (h *graphHandler) RemoveNode(ctx context.Context, in *UIDReq, out *RemoveRe
 	return h.GraphHandler.RemoveNode(ctx, in, out)
 }
 
-func (h *graphHandler) Node(ctx context.Context, in *UIDReq, out *NodeResp) error {
+func (h *graphHandler) Node(ctx context.Context, in *NodeReq, out *NodeResp) error {
 	return h.GraphHandler.Node(ctx, in, out)
 }
 
@@ -380,7 +380,7 @@ func (h *graphHandler) RemoveEdge(ctx context.Context, in *UIDReq, out *RemoveRe
 	return h.GraphHandler.RemoveEdge(ctx, in, out)
 }
 
-func (h *graphHandler) Edge(ctx context.Context, in *UIDReq, out *EdgeResp) error {
+func (h *graphHandler) Edge(ctx context.Context, in *EdgeReq, out *EdgeResp) error {
 	return h.GraphHandler.Edge(ctx, in, out)
 }
 

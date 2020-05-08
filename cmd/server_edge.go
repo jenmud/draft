@@ -43,12 +43,29 @@ func (s *server) RemoveEdge(ctx context.Context, req *pb.UIDReq, resp *pb.Remove
 	return nil
 }
 
-func (s *server) Edge(ctx context.Context, req *pb.UIDReq, resp *pb.EdgeResp) error {
-	edge, err := s.graph.Edge(req.Uid)
-	if err != nil {
-		return fmt.Errorf("[Edge] Error fetching edge: %v", err)
+func (s *server) Edge(ctx context.Context, req *pb.EdgeReq, resp *pb.EdgeResp) error {
+	// if we have a uid in the edge request, then just use that.
+	if req.Uid != "" {
+		edge, err := s.graph.Edge(req.Uid)
+		if err != nil {
+			return fmt.Errorf("[Edge] Error fetching edge: %v", err)
+		}
+
+		resp.Uid = edge.UID
+		resp.SourceUid = edge.SourceUID
+		resp.Label = edge.Label
+		resp.TargetUid = edge.TargetUID
+		resp.Properties = edge.Properties
+		return nil
 	}
 
+	// if we don't have a Uid do a filter for labels and properties.
+	iter := s.graph.EdgesBy("", []string{req.Label}, "", req.Properties)
+	if iter.Size() != 1 {
+		return fmt.Errorf("[Edge] Error fetching edge, expected 1 but found %d", iter.Size())
+	}
+
+	edge := iter.Value().(graph.Edge)
 	resp.Uid = edge.UID
 	resp.SourceUid = edge.SourceUID
 	resp.Label = edge.Label

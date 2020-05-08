@@ -115,7 +115,7 @@ service Graph {
     // RemoveNode remove a node from the graph.
     rpc RemoveNode (UIDReq) returns (RemoveResp);
     // Node returns the node if found.
-    rpc Node (UIDReq) returns (NodeResp);
+    rpc Node (NodeReq) returns (NodeResp);
     // Nodes returns all the node in the graph.
     rpc Nodes (NodesReq) returns (stream NodeResp);
 
@@ -124,7 +124,7 @@ service Graph {
     // RemoveEdge remove a edge from the graph.
     rpc RemoveEdge (UIDReq) returns (RemoveResp);
     // Edge returns the edge if found.
-    rpc Edge (UIDReq) returns (EdgeResp);
+    rpc Edge (EdgeReq) returns (EdgeResp);
     // Edges returns all the edges in the graph.
     rpc Edges (EdgesReq) returns (stream EdgeResp);
 
